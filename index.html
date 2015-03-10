@@ -794,7 +794,7 @@ function update () {
 						};
 						break;
 					case "syn":
-						if (currentArray.length > 9) {
+						if (itemArray[i].equipped) {
 							var compareItem = {};
 						};
 						for (var j = 0; j < currentArray.length; j++) {
@@ -858,7 +858,7 @@ function update () {
 					itemIndex += tagThing[k] * calcIndex(item.DB, item.CR, item.CD, item.BR, item.BD);
 				};
 			};
-			itemArray[i].dmg = itemIndex;
+			itemArray[i].dmg = (output == "syn" && itemArray[i].equipped) ? (ezIndex - itemIndex) / itemIndex : (itemIndex - ezIndex) / ezIndex;
 // TODO: Add prereq tree to Omegas and subtract prereqs that are already taken
 			if (output == "ome") {
 				itemArray[i].efficiency = (itemIndex > ezIndex) ? 4000 * (itemIndex - ezIndex) / ezIndex / ((compareItem.cost > 0) ? compareItem.cost : 0) : 0;
@@ -880,7 +880,7 @@ function update () {
 		} else {
 			displayArray.sort(function (a, b) {
 				if (a.dmg == b.dmg) {
-					if (a.equipped && b.equipped) {
+					if ((a.equipped && b.equipped) || (!(a.equipped) && !(b.equipped))) {
 						if (a.name == b.name) {
 							return b.grade - a.grade;
 						} else {
@@ -894,11 +894,7 @@ function update () {
 						};
 					};
 				} else {
-					if (output == "syn" && currentArray.length > 9) {
-						return a.dmg - b.dmg;
-					} else {
-						return b.dmg - a.dmg;
-					};
+					return b.dmg - a.dmg;
 				};
 			});
 		};
@@ -937,12 +933,12 @@ function update () {
 						break;
 				};
 			};
-			if (output == "syn" && currentArray.length > 9) {
-				var dmgDelta = (ezIndex - displayArray[i].dmg) / displayArray[i].dmg;
+			if (output == "syn" && displayArray[i].equipped) {
+				var dmgDisplay = "(" + ((displayArray[i].dmg > 0) ? "+ " : "") + fixedToPercent(displayArray[i].dmg) + ")&nbsp;"
 			} else {
-				var dmgDelta = (displayArray[i].dmg - ezIndex) / ezIndex;
+				var dmgDisplay = ((displayArray[i].dmg > 0) ? "+ " : "") + fixedToPercent(displayArray[i].dmg) + "&nbsp;"
 			};
-			document.getElementById(output + "DPS" + i).innerHTML = ((displayArray[i].dmg >= ezIndex) ? "+ " : "") + fixedToPercent(dmgDelta) + "&nbsp;";
+			document.getElementById(output + "DPS" + i).innerHTML = dmgDisplay;
 			if (output == "ome") {
 				document.getElementById(output + "Efficiency" + i).innerHTML = fixedToPercent(displayArray[i].efficiency) + "&nbsp;";
 				document.getElementById(output + "Cost" + i).innerHTML = displayArray[i].newcost + "&nbsp;";
