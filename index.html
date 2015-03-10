@@ -1,0 +1,1419 @@
+<html>
+<head>
+<title>D.O.O.P. v2.0</title>
+<style type="text/css">
+td {width: 100px; font-family: Arial; font-size: small; vertical-align: top;}
+.heading {font-weight: bold;}
+.center {text-align: center;}
+.field {border: gray solid 1px; text-align: right;}
+.input {border: gray solid 1px;}
+.total {border: gray dotted 1px; background-color: #EFEFEF;}
+.actual {border: #FFAA00 solid 1px;}
+.output {border: #BB0000 solid 1px;}
+.button {border: black solid 1px;}
+.statbutton {width: 115px; outline: black solid 1px;}
+.optionname {width: 210px;}
+.optiondelta {outline: #BB0000 solid 1px; text-align: right;}
+.optionefficiency {outline: #FFAA00 solid 1px; text-align: right;}
+.optioncost {outline: gray solid 1px; text-align: right;}
+.optionstats {width: 115px; outline: gray solid 1px;}
+</style>
+<script src="options.js"></script> 
+<script type="text/javascript">
+<!--
+function initialize () {
+	base64 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
+	tagThing = {physical: 0, energy: 0, mental: 0, melee: 0, ranged: 0, area: 0, dot: 0, movement: 0, boss: 0, unaware: 0, HP: 0, SP: 0, DF: 0, TN: 0};
+	stats = {AS: {display: "Attack Speed", percent: true	},
+		CR: {display: "Critical Rating",
+			subtype: {physical: {display: "physical",
+						damagetype: true,
+						linked: true},
+				energy: {display: "energy",
+						damagetype: true,
+						linked: true	},
+				mental: {display: "mental",
+						damagetype: true,
+						linked: true	},
+				melee: {display: "melee",
+						linked: true	},
+				ranged: {display: "ranged",
+						linked: true	},
+				area: {display: "area",
+						linked: true	},
+				movement: {display: "movement",
+						linked: true,
+						nosheet: true	}
+			}
+		},
+		CD: {display: "Critical Damage"	},
+		BR: {display: "Brutal Rating"	},
+		BD: {display: "Brutal Damage"	},
+		DR: {display: "Damage Rating",
+			subtype: {physical: {display: "physical",
+						damagetype: true,
+						linked: true	},
+				energy: {display: "energy",
+						damagetype: true,
+						linked: true	},
+				mental: {display: "mental",
+						damagetype: true,
+						linked: true	},
+				melee: {display: "melee"	},
+				ranged: {display: "ranged"	},
+				area: {display: "area",
+					nosheet: true		},
+				dot: {display: "dot",
+					nosheet: true		},
+				movement: {display: "movement",
+					nosheet: true		},
+				boss: {display: "boss",
+					nosheet: true		},
+				unaware: {display: "unaware",
+					nosheet: true		}
+			}
+		},
+		DB: {display: "Damage Bonus",
+			percent: true,
+			subtype: {physical: {display: "physical",
+						percent: true	},
+				energy: {display: "energy",
+						percent: true	},
+				mental: {display: "mental",
+						percent: true	},
+				melee: {display: "melee",
+						percent: true	},
+				ranged: {display: "ranged",
+						percent: true	},
+				area: {display: "area",
+						percent: true,
+						nosheet: true	},
+				dot: {display: "dot",
+						percent: true,
+						nosheet: true	},
+				movement: {display: "movement",
+						percent: true,
+						nosheet: true	},
+				boss: {display: "boss",
+						percent: true,
+						nosheet: true	},
+				unaware: {display: "unaware",
+						percent: true,
+						nosheet: true	}
+			}
+		},
+		HP: {display: "Health",
+			integertotal: true	},
+		SP: {display: "Spirit",
+			integertotal: true	},
+		DF: {display: "Defense",
+			integertotal: true	},
+		TN: {display: "Tenacity",
+			integertotal: true	},
+		SK: {display: "All Skills",
+			integertotal: true	}
+	};
+	equipped = {};
+	var buildStatTable = function (prefix, subtype) {
+				var currentStat = (subtype) ? stats[prefix].subtype[subtype] : stats[prefix];
+				var fieldName = prefix + ((subtype) ? subtype : "");
+				var newRow = statsTable.insertRow(rowcount);
+				newRow.className = prefix + " " + ((subtype) ? subtype : "");
+				var newCell = newRow.insertCell(0);
+				newCell.innerHTML = ((subtype) ? "&rarr;" : "") + currentStat.display;
+				newCell = newRow.insertCell(1);
+				if (!(currentStat.nosheet)) {
+					newCell.id = "sheet_" + fieldName;
+					newCell.className = "field input";
+					newCell.onclick = function() {selectField(this.id)};
+				};
+				newCell = newRow.insertCell(2);
+				newCell.id = "total_" + fieldName;
+				newCell.className = "field total";
+				newCell.innerHTML = "0";
+				newCell = newRow.insertCell(3);
+				newCell.id = "actual_" + fieldName;
+				newCell.className = "field actual";
+				newCell.innerHTML = "0";
+				newCell = newRow.insertCell(4);
+				newCell.id = "value_" + fieldName;
+				newCell.className = "field";
+				newCell = newRow.insertCell(5);
+				newCell.id = "weight_" + fieldName;
+				newCell.className = "field";
+				rowcount++;
+			};
+	var rowcount = 0;
+	for (x in stats) {
+		buildStatTable(x);
+		stats[x].value = 0;
+		if (stats[x].subtype) {
+			for (y in stats[x].subtype) {
+				buildStatTable(x, y);
+				stats[x].subtype[y].value = 0;
+			};
+		};
+	};
+	var newRow = statsTable.insertRow(0);
+	var newCell = newRow.insertCell(0);
+	newCell.className = "heading center";
+	newCell.innerHTML = "Statistics";
+	newCell = newRow.insertCell(1);
+	newCell.className = "heading center";
+	newCell.innerHTML = "Sheet";
+	newCell = newRow.insertCell(2);
+	newCell.className = "heading center";
+	newCell.innerHTML = "Subtotal";
+	newCell = newRow.insertCell(3);
+	newCell.className = "heading center";
+	newCell.innerHTML = "Actual";
+	newCell = newRow.insertCell(4);
+	newCell.className = "heading center";
+	newCell.innerHTML = "+1% Damage";
+	newCell = newRow.insertCell(5);
+	newCell.className = "heading center";
+	newCell.innerHTML = "Weight in DR";
+	var buildOptionTable = function (optionName, optionArray) {
+		var stem = optionName.substr(0, 3).toLowerCase();
+		var optionTable = document.createElement("TABLE");
+		optionTable.id = stem + "Table";
+		if (stem != "leg") {
+			optionTable.hidden = true;
+		};
+		document.getElementById("comparisons").appendChild(optionTable);
+		for (var i = 0; i < optionArray.length; i++) {
+			var newRow = optionTable.insertRow(i);
+			var newCell = newRow.insertCell(0);
+			newCell.className = "optionname";
+			var innerTable = document.createElement("TABLE");
+			innerTable.cellSpacing = 0;
+			innerTable.cellPadding = 0;
+			var innerRow = innerTable.insertRow(0);
+			var innerCell = innerRow.insertCell(0);
+			innerCell.id = stem + "Name" + i;
+			innerCell.className = "optionname";
+			newCell.appendChild(innerTable);
+			newCell = newRow.insertCell(1);
+			var innerTable = document.createElement("TABLE");
+			innerTable.cellSpacing = 0;
+			innerTable.cellPadding = 0;
+			var innerRow = innerTable.insertRow(0);
+			var innerCell = innerRow.insertCell(0);
+			innerCell.id = stem + "DPS" + i;
+			innerCell.className = "optiondelta";
+			newCell.appendChild(innerTable);
+			newCell = newRow.insertCell(2);
+			var innerTable = document.createElement("TABLE");
+			innerTable.cellSpacing = 0;
+			innerTable.cellPadding = 0;
+			var innerRow = innerTable.insertRow(0);
+			var innerCell = innerRow.insertCell(0);
+			innerCell.id = stem + "Stats" + i;
+			innerCell.className = "optionstats " + stem + "stats";
+			innerCell.hidden = true;
+			newCell.appendChild(innerTable);
+			if (optionName == "Omega Points") {
+				newCell = newRow.insertCell(2);
+				var innerTable = document.createElement("TABLE");
+				innerTable.cellSpacing = 0;
+				innerTable.cellPadding = 0;
+				var innerRow = innerTable.insertRow(0);
+				var innerCell = innerRow.insertCell(0);
+				innerCell.id = stem + "Efficiency" + i;
+				innerCell.className = "optionefficiency";
+				newCell.appendChild(innerTable);
+				newCell = newRow.insertCell(3);
+				var innerTable = document.createElement("TABLE");
+				innerTable.cellSpacing = 0;
+				innerTable.cellPadding = 0;
+				var innerRow = innerTable.insertRow(0);
+				var innerCell = innerRow.insertCell(0);
+				innerCell.id = stem + "Cost" + i;
+				innerCell.className = "optioncost";
+				newCell.appendChild(innerTable);
+			};
+		};
+		var newRow = optionTable.insertRow(0);
+		var newCell = newRow.insertCell(0);
+		newCell.className = "heading";
+		newCell.innerHTML = "Name";
+		newCell = newRow.insertCell(1);
+		newCell.className = "heading center";
+		newCell.innerHTML = "Damage";
+		if (optionName != "Attributes") {
+			newCell = newRow.insertCell(2);
+			newCell.className = "statbutton center";
+			newCell.innerHTML = "show details";
+			newCell.onclick = function () {
+				var optionStats = document.getElementsByClassName(stem + "stats");
+				if (this.innerHTML == "show details") {
+					this.innerHTML = "hide details";
+					for (var i = 0; i < optionStats.length; i++) {
+						optionStats[i].hidden = false;
+					};
+				} else {
+					this.innerHTML = "show details";
+					for (var i = 0; i < optionStats.length; i++) {
+						optionStats[i].hidden = true;
+					};
+				};
+			};
+		};
+		if (optionName == "Omega Points") {
+			newCell = newRow.insertCell(2);
+			newCell.className = "heading center";
+			newCell.innerHTML = "Efficiency";
+			newCell = newRow.insertCell(3);
+			newCell.className = "heading center";
+			newCell.innerHTML = "Cost";
+		};
+	};
+	for (var i = 0; i < masterOptionArray.length; i++) {
+		var headingRow = document.getElementById("optionHeadings").rows[0];
+		var newCell = headingRow.insertCell(i);
+		newCell.className = "button center";
+		newCell.innerHTML = masterOptionArray[i].name;
+		if (i == 0) {
+			newCell.style.backgroundColor = "666666";
+			newCell.style.color = "FFFFFF";
+		};
+		buildOptionTable(masterOptionArray[i].name, masterOptionArray[i].array);
+		newCell.onclick = function () {
+			for (var i = 0; i < masterOptionArray.length; i++) {
+				var stem = masterOptionArray[i].name.substr(0, 3).toLowerCase();
+				var optionTable = document.getElementById(stem + "Table");
+				optionTable.hidden = true;
+				this.parentNode.cells[i].style.backgroundColor = "initial";
+				this.parentNode.cells[i].style.color = "initial";
+			};
+			this.style.backgroundColor = "666666";
+			this.style.color = "FFFFFF";
+			var stem = this.innerHTML.substr(0, 3).toLowerCase();
+			var optionTable = document.getElementById(stem + "Table");
+			optionTable.hidden = false;
+		};
+	};
+	resetChecks();
+	selectedField = "sheet_AS";
+	textbuffer = "0";
+	textsuffix = "";
+	textdigits = 0;
+	var importArray = (location.search.length > 0) ? location.search.substr(1).split(":") : ["phyGS2,0,0,0", "melGS2,0,0,0", "bosGS2,0,0,0"];
+	for (var i = 0; i < importArray.length; i++) {
+		var prefix = importArray[i].substr(0, 3);
+		switch (prefix) {
+			case "phy":
+				prefix = "physical";
+				break;
+			case "ene":
+				prefix = "energy";
+				break;
+			case "men":
+				prefix = "mental";
+				break;
+			case "mel":
+				prefix = "melee";
+				break;
+			case "ran":
+				prefix = "ranged";
+				break;
+			case "are":
+				prefix = "area";
+				break;
+			case "dot":
+				prefix = "dot";
+				break;
+			case "mov":
+				prefix = "movement";
+				break;
+			case "bos":
+				prefix = "boss";
+				break;
+			case "una":
+				prefix = "unaware";
+				break;
+			case "HP_":
+				prefix = "HP";
+				break;
+			case "SP_":
+				prefix = "SP";
+				break;
+			case "DF_":
+				prefix = "DF";
+				break;
+			case "TN_":
+				prefix = "TN";
+				break;
+		};
+		switch (prefix) {
+			case "bas":
+			case "equ":
+			case "syn":
+			case "cos":
+				break;
+			default:
+				document.getElementById("check" + prefix.substr(0,1).toUpperCase() + prefix.substr(1)).checked = true;
+				toggleBlock(prefix, true);
+				break;
+		};
+		var ratings = importArray[i].substr(3).split(",");
+		for (var j = 0; j < ratings.length; j++) {
+			ratings[j] = integerFrom64(ratings[j]);
+		};
+		switch (prefix) {
+			case "bas":
+				stats.AS.value = ratings[0] / 10000;
+				stats.CR.value = ratings[1];
+				stats.CD.value = ratings[2];
+				stats.BR.value = ratings[3];
+				stats.BD.value = ratings[4];
+				stats.DR.value = ratings[5];
+				stats.DB.value = ratings[6] / 10000;
+				break;
+			case "equ":
+				if (ratings[0] > 0) {
+					selectOption("leg", ratings[0] - 1);
+				};
+				if (ratings[1] > 0) {
+					selectOption("med", ratings[1] - 1);
+				};
+				if (ratings[2] > 0) {
+					selectOption("rel", ratings[2] - 1);
+				};
+				if (ratings[3] > 0) {
+					selectOption("ble", ratings[3] - 1);
+				};
+				break;
+			case "cos":
+			case "syn":
+				for (var j = 0; j < ratings.length; j++) {
+					selectOption(prefix, ratings[j] - 1);
+				};
+				break;
+			default:
+				tagThing[prefix] = ratings[0] / 10000;
+				document.getElementById("tag_EZ" + prefix).innerHTML = fixedToPercent(tagThing[prefix]);
+				if (prefix == "HP" || prefix == "SP" || prefix == "DF" || prefix == "TN") {
+					stats[prefix].value = ratings[1];
+				} else {
+					if (stats.CR.subtype[prefix] && !stats.CR.subtype[prefix].nosheet) {
+						stats.CR.subtype[prefix].value = ratings[1];
+					};
+					if (stats.DR.subtype[prefix] && !stats.DR.subtype[prefix].nosheet) {
+						stats.DR.subtype[prefix].value = ratings[2];
+						stats.DB.subtype[prefix].value = ratings[3] / 10000;
+					};
+				};
+				break;
+		};
+		if (prefix == "bas") {
+
+		} else {
+
+		};
+
+	};
+	update();
+	selectField("sheet_AS");
+};
+
+function selectOption (stem, index) {
+	var optionArray = window[stem + "Array"];
+	var selectedOption = optionArray[index];
+	var equip = function (option) {
+		option.equipped = true;
+		for (k in option) {
+			if (equipped[k]) {
+				equipped[k] += option[k];
+				if (equipped[k] == 0) {
+					delete equipped[k];
+				};
+			} else {
+				switch (k) {
+					case "name":
+					case "equipped":
+					case "dmg":
+					case "efficiency":
+					case "grade":
+					case "rank":
+						break;
+					default:
+						equipped[k] = option[k];
+						break;
+				};
+			};
+		};
+	};
+	var unequip = function (option) {
+		delete option.equipped;
+		for (k in option) {
+			if (equipped[k]) {
+				equipped[k] -= option[k];
+				if (equipped[k] == 0) {
+					delete equipped[k];
+				};
+			} else {
+				switch (k) {
+					case "name":
+					case "equipped":
+					case "dmg":
+					case "efficiency":
+					case "grade":
+					case "rank":
+						break;
+					default:
+						equipped[k] = option[k];
+						break;
+				};
+			};
+		};
+	};
+	if (stem != "syn") {
+		for (var i = 0; i < optionArray.length; i++) {
+			if (i != index && optionArray[i].equipped && (!(optionArray[i].grade) || optionArray[i].grade == selectedOption.grade) && (!(optionArray[i].rank) || optionArray[i].name == selectedOption.name)) {
+				unequip(optionArray[i]);
+			};
+		};
+	};
+	if (optionArray[index].equipped) {
+		unequip(optionArray[index]);
+	} else {
+		if (stem == "syn") {
+			var synergies = 0;
+			for (var i = 0; i < optionArray.length; i++) {
+				if (optionArray[i].equipped) {
+					synergies++;
+				};
+			};
+		};
+		if (stem != "syn" || synergies < 10) {
+			equip(optionArray[index]);
+		};
+	};
+	update();
+};
+
+function selectField (field) {
+	readText (selectedField);
+	validateText ();
+	editing = 0;
+	document.getElementById(selectedField).style.border = "gray solid 1px";
+	document.getElementById(selectedField).style.outline = "initial";
+	selectedField = field;
+	document.getElementById(selectedField).style.border = "#2F8FFF solid 1px";
+	document.getElementById(selectedField).style.outline = "#2F8FFF solid 1px";
+	readText (selectedField);
+};
+
+function readText (field) {
+	textbuffer = document.getElementById(field).innerHTML
+	if (textbuffer.substr(-1) == "%") {
+		textbuffer = textbuffer.slice(0, textbuffer.length - 1);
+		textsuffix = "%";
+		textdigits = 2;
+	} else {
+		textsuffix = "";
+		textdigits = 0;
+	};
+};
+
+function attTotal (item) {
+	var total = {DUR: (item.ATdurability) ? item.ATdurability : 0,
+		STR: (item.ATstrength) ? item.ATstrength : 0,
+		FIG: (item.ATfighting) ? item.ATfighting : 0,
+		SPE: (item.ATspeed) ? item.ATspeed : 0,
+		ENE: (item.ATenergy) ? item.ATenergy : 0,
+		INT: (item.ATintelligence) ? item.ATintelligence : 0
+	};
+	if (item.ATcosmic) {
+		var damagetypes = ((tagThing.physical > 0) ? 1 : 0) + ((tagThing.energy > 0) ? 1 : 0) + ((tagThing.mental > 0) ? 1 : 0);
+		total.DUR += damagetypes * item.ATcosmic;
+		total.STR += damagetypes * item.ATcosmic;
+		total.FIG += damagetypes * item.ATcosmic;
+		total.SPE += damagetypes * item.ATcosmic;
+		total.ENE += damagetypes * item.ATcosmic;
+		total.INT += damagetypes * item.ATcosmic;
+	};
+	return total;
+};
+
+function calcLinks (prefix, subtype) {
+	var total = attTotal(equipped);
+	var currentStat = (subtype) ? stats[prefix].subtype[subtype] : stats[prefix];
+	var equipStat = (subtype) ? equipped[prefix + subtype] : equipped[prefix];
+	var linkedValue = (prefix != "AS") ? ((equipStat) ? equipStat : 0) : 0;
+	switch (prefix) {
+		case "CR":
+			linkedValue += tagThing.TN * stats.TN.actual + total.INT * 30;
+			linkedValue += (subtype && equipped.CR) ? equipped.CR : 0;
+			break;
+		case "CD":
+			linkedValue += total.INT * 90;
+			break;
+		case "BR":
+			linkedValue += total.FIG * 60;
+			break;
+		case "BD":
+			linkedValue += total.FIG * 180;
+			break;
+		case "DR":
+			linkedValue += (currentStat.linked && equipped.DR) ? equipped.DR : 0;
+			break;
+		case "DB":
+			if (subtype) {
+				switch (subtype) {
+					case "physical":
+						linkedValue += total.STR * 0.04;
+						break;
+					case "energy":
+					case "mental":
+						linkedValue += total.ENE * 0.04;
+						break;
+				};
+			} else {
+				linkedValue += total.FIG * 0.03
+			};
+			break;
+		case "HP":
+			linkedValue += total.DUR * 180;
+			break;
+		case "SP":
+			linkedValue += total.INT * 2;
+			break;
+		case "TN":
+			linkedValue += total.SPE * 15;
+			break;
+	};
+	return linkedValue;
+};
+
+function validateText () {
+	if (isNaN(textbuffer)) {
+		textbuffer = 0;
+	};
+	var newNumber = Number(textbuffer);
+	if (selectedField.substr(0, 6) == "tag_EZ") {
+		newNumber = Math.max(0, newNumber);
+		if (selectedField.substr(6, 2) != "SP") {
+			newNumber = Math.min(100, newNumber);
+		};
+	};
+	if (selectedField == "sheet_AS") {
+		newNumber = Math.min(40, newNumber);
+	};
+	if (textdigits == 2) {
+		newNumber = Math.min(99999999, newNumber);
+	};
+	if (Number(newNumber.toFixed(textdigits)) == 0 && newNumber.toFixed(textdigits).substr(0, 1) == "-") {
+		newNumber = 0;
+	};
+	textbuffer = newNumber.toFixed(textdigits);
+	if (selectedField.substr(0, 6) == "tag_EZ") {
+		var subtype = selectedField.slice(6);
+		tagThing[subtype] = textbuffer / 100;
+	} else {
+		var prefix = selectedField.substr(6, 2);
+		var subtype = selectedField.substr(8);
+		var currentStat = (subtype) ? stats[prefix].subtype[subtype] : stats[prefix];
+		var linkedValue = ((currentStat.linked) ? stats[prefix].value : 0) + calcLinks(prefix, subtype);
+		currentStat.value = (textsuffix == "%") ? (textbuffer) / 100 - linkedValue : textbuffer - linkedValue;
+	};
+	update();
+};
+
+function update () {
+// Conversion calculations
+	var total = attTotal(equipped);
+	stats.HP.total = stats.HP.value + ((equipped.HP) ? equipped.HP : 0) + total.DUR * 180;
+	stats.HP.actual = stats.HP.total;
+	stats.SP.total = stats.SP.value + ((equipped.SP) ? equipped.SP : 0) + total.INT * 2;
+	stats.SP.actual = stats.SP.total;
+	stats.DF.total = stats.DF.value + ((equipped.DF) ? equipped.DF : 0);
+	stats.DF.actual = stats.DF.total;
+	stats.TN.total = stats.TN.value + ((equipped.TN) ? equipped.TN : 0) + total.SPE * 15;
+	stats.TN.actual = stats.TN.total;
+	var cnvCR = tagThing.TN * stats.TN.actual;
+	var cnvDR = tagThing.HP * stats.HP.actual + tagThing.SP * stats.SP.actual + tagThing.DF * stats.DF.actual;
+// Update stats
+	var totalStats = function (prefix, subtype) {
+		var currentStat = (subtype) ? stats[prefix].subtype[subtype] : stats[prefix];
+		var equipStat = (subtype) ? equipped[prefix + subtype] : equipped[prefix];
+		switch (prefix) {
+			case "AS":
+				currentStat.total = ((currentStat.value > 0.125) ? (Math.log(1 - (currentStat.value * 2.5)) / -3) : currentStat.value) + ((equipStat) ? equipStat : 0) + total.SPE * 0.01;
+				currentStat.actual = Math.min(currentStat.total, 0.4 * (1 - Math.exp(-3 * currentStat.total)));
+				break;
+			case "CR":
+				currentStat.total = ((currentStat.linked) ? stats[prefix].total : total.INT * 30 + cnvCR) + currentStat.value + ((equipStat) ? equipStat : 0);
+				currentStat.actual = currentStat.total * 0.99 / (currentStat.total + 3601) + ((equipped.CC) ? equipped.CC : 0);
+				currentStat.actual += ((subtype && equipped["CC" + subtype]) ? equipped["CC" + subtype] : 0);
+				break;
+			case "BR":
+				currentStat.total = ((currentStat.linked) ? stats[prefix].total : total.FIG * 60) + currentStat.value + ((equipStat) ? equipStat : 0);
+				currentStat.actual = currentStat.total * 0.75 / (currentStat.total + 3601) + ((equipped.BC) ? equipped.BC : 0);
+				break;
+			case "CD":
+				currentStat.total = currentStat.value + total.INT * 90 + ((equipStat) ? equipStat : 0);
+				currentStat.actual = currentStat.total / 8000 + 1.5 + ((equipped.CM) ? equipped.CM : 0);
+				break;
+			case "BD":
+				currentStat.total = stats.CD.total + currentStat.value + total.FIG * 180 + ((equipStat) ? equipStat : 0);
+				currentStat.actual = currentStat.total / 8000 + 3;
+				break;
+			case "DR":
+				currentStat.total = ((currentStat.linked) ? stats[prefix].total : 0) + currentStat.value + ((subtype) ? 0 : cnvDR) + ((equipStat) ? equipStat : 0);
+				currentStat.actual = currentStat.total / 4000;
+				break;
+			case "DB":
+				currentStat.total = currentStat.value + ((equipStat) ? equipStat : 0);
+				if (subtype) {
+					switch (subtype) {
+						case "physical":
+							currentStat.total += total.STR * 0.04;
+							break;
+						case "energy":
+						case "mental":
+							currentStat.total += total.ENE * 0.04;
+							break;
+						case "movement":
+							currentStat.total += total.SPE * 0.02;
+							break;
+					};
+				} else {
+					currentStat.total += total.FIG * 0.03;
+				};
+				currentStat.actual = currentStat.total;
+				break;
+			case "SK":
+				currentStat.total = currentStat.value + ((equipStat) ? equipStat : 0);
+				currentStat.actual = currentStat.total;
+				break;
+		};
+	};
+	for (x in stats) {
+		totalStats(x);
+		if (stats[x].subtype) {
+			for (y in stats[x].subtype) {
+			totalStats(x, y);
+			};
+		};
+	};
+// DPS calculation
+	var ezCR = {base: 0};
+	var ezDB = {base: 0};
+	for (k in stats.DR.subtype) {
+		if (stats.CR.subtype[k] && !(stats.CR.subtype[k].damagetype)) {
+			ezCR.base += tagThing[k] * (stats.CR.subtype[k].total - stats.CR.total);
+		};
+		if (!(stats.DR.subtype[k].damagetype)) {
+			ezDB.base += tagThing[k] * (stats.DR.subtype[k].actual + stats.DB.subtype[k].actual);
+		};
+	};
+	ezCR.base = Math.max(0, ezCR.base);
+	ezDB.base = 1 + stats.DB.actual + Math.max(0, ezDB.base);
+	var newCR = {};
+	var ezIndex = 0;
+	for (k in stats.CR.subtype) {
+		if (stats.CR.subtype[k].damagetype) {
+			newCR[k] = ezCR.base + stats.CR.subtype[k].total;
+			ezCR[k] = newCR[k] * 0.99 / (newCR[k] + 3601) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC"+k]) ? equipped["CC"+k] : 0);
+			ezDB[k] = ezDB.base + stats.DR.subtype[k].actual + stats.DB.subtype[k].actual;
+			ezIndex += tagThing[k] * calcIndex(ezDB[k], ezCR[k], stats.CD.actual, stats.BR.actual, stats.BD.actual);
+		};
+	};
+// DPS option comparisons
+	var optionDPS = function (itemArray, output) {
+		switch (output) {
+			case "cos":
+			case "ome":
+			case "syn":
+				var currentArray = [];
+				for (var i = 0; i < itemArray.length; i++) {
+					if (itemArray[i].equipped) {
+						currentArray.push(itemArray[i]);
+					};
+				};
+				break;
+			default:
+				for (var i = 0; i < itemArray.length; i++) {
+					if (itemArray[i].equipped) {
+						var currentOption = itemArray[i];
+					};
+				};
+				break;
+		};
+		for (var i = 0; i < itemArray.length; i++) {
+			var compareItem = {};
+			for (k in itemArray[i]) {
+				switch (k) {
+					case "dmg":
+					case "grade":
+					case "rank":
+					case "efficiency":
+					case "equipped":
+						break;
+					default:
+						compareItem[k] = itemArray[i][k];
+						break;
+				};
+			};
+			var opportunityCost = function (item) {
+				for (k in item) {
+					switch (k) {
+						case "name":
+						case "dmg":
+						case "grade":
+						case "rank":
+						case "efficiency":
+						case "equipped":
+							break;
+						default:
+							if (compareItem[k]) {
+								compareItem[k] -= item[k];
+							} else {
+								compareItem[k] = -item[k];
+							};
+							break;
+					};
+				};
+			};
+			if (currentArray || currentOption) {
+				switch (output) {
+					case "cos":
+						for (var j = 0; j < currentArray.length; j++) {
+							if (currentArray[j].grade == itemArray[i].grade) {
+								opportunityCost(currentArray[j]);
+							};
+						};
+						break;
+					case "ome":
+						for (var j = 0; j < currentArray.length; j++) {
+							if (currentArray[j].name == itemArray[i].name) {
+								opportunityCost(currentArray[j]);
+							};
+						};
+						break;
+					case "syn":
+						if (currentArray.length > 9) {
+							var compareItem = {};
+						};
+						for (var j = 0; j < currentArray.length; j++) {
+							if (currentArray[j].name == itemArray[i].name) {
+								opportunityCost(currentArray[j]);
+							};
+						};
+						break;
+					default:
+						opportunityCost(currentOption);
+						break;
+				};
+			};
+			var itemIndex = 0;
+			var item = attTotal(compareItem);
+			var worn = attTotal(equipped);
+			item.HP = ((compareItem.HP) ? compareItem.HP : 0) + item.DUR * 180;
+			item.SP = ((compareItem.SP) ? compareItem.SP : 0) + item.INT * 2;
+			item.DF = (compareItem.DF) ? compareItem.DF : 0;
+			item.TN = ((compareItem.TN) ? compareItem.TN : 0) + item.SPE * 15;
+			var itemcnvDR = tagThing.HP * item.HP + tagThing.SP * item.SP + tagThing.DF * item.DF;
+			item.BR = stats.BR.total + ((compareItem.BR) ? compareItem.BR : 0) + item.FIG * 60;
+			item.BR = item.BR * 0.75 / (item.BR + 3601) + ((equipped.BC) ? equipped.BC : 0) + ((compareItem.BC) ? compareItem.BC : 0);
+			item.CD = ((compareItem.CD) ? compareItem.CD : 0) + item.INT * 90;
+			item.BD = item.CD + ((compareItem.BD) ? compareItem.BD : 0) + item.FIG * 180;
+			item.CD = stats.CD.actual + item.CD / 8000 + ((compareItem.CM) ? compareItem.CM : 0);
+			item.BD = stats.BD.actual + item.BD / 8000;
+			for (k in stats.CR.subtype) {
+				if (stats.CR.subtype[k].damagetype) {
+					item.CR = newCR[k] + ((compareItem.CR) ? compareItem.CR : 0) + cnvCR + item.INT * 30 + tagThing.TN * (item.TN - ((equipped.TN) ? equipped.TN : 0) - worn.SPE * 15);
+					item.CR += (compareItem["CR" + k]) ? compareItem["CR" + k] : 0;
+					for (tag in stats.CR.subtype) {
+						if (!(stats.CR.subtype[tag].damagetype)) {
+							item.CR += (compareItem["CR" + tag]) ? tagThing[tag] * compareItem["CR" + tag] : 0;
+						};
+					};
+					item.CR = item.CR * 0.99 / (item.CR + 3601) + ((compareItem.CC) ? compareItem.CC : 0) + ((compareItem["CC" + k]) ? compareItem["CC" + k] : 0) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC" + k]) ? equipped["CC" + k] : 0);
+					item.DB = (((compareItem.DR) ? compareItem.DR : 0) + itemcnvDR) / 4000 + ((compareItem.DB) ? compareItem.DB : 0) + item.FIG * 0.03;
+					item.DB += ((compareItem["DR" + k]) ? compareItem["DR" + k] / 4000 : 0) + ((compareItem["DB" + k]) ? compareItem["DB" + k] : 0);
+					switch (k) {
+						case "physical":
+							item.DB += item.STR * 0.04;
+							break;
+						case "energy":
+						case "mental":
+							item.DB += item.ENE * 0.04;
+							break;
+					};
+					for (tag in stats.DR.subtype) {
+						if (!(stats.DR.subtype[tag].damagetype)) {
+							item.DB += ((compareItem["DR" + tag]) ? tagThing[tag] * compareItem["DR" + tag] / 4000 : 0) + ((compareItem["DB" + tag]) ? tagThing[tag] * compareItem["DB" + tag] : 0);
+							if (tag == "movement") {
+								item.DB += tagThing[tag] * item.SPE * 0.02;
+							};
+						};
+					};
+					if (tagThing.physical * tagThing.energy > 0 || tagThing.physical * tagThing.mental > 0 || tagThing.energy * tagThing.mental > 0) {
+						item.DB += (compareItem.DRcosmic) ? itemArray[i].DRcosmic / 4000 : 0;
+					};
+					item.DB += ezDB[k];
+					itemIndex += tagThing[k] * calcIndex(item.DB, item.CR, item.CD, item.BR, item.BD);
+				};
+			};
+			itemArray[i].dmg = itemIndex;
+// TODO: Add prereq tree to Omegas and subtract prereqs that are already taken
+			if (output == "ome") {
+				itemArray[i].efficiency = (itemIndex > ezIndex) ? 4000 * (itemIndex - ezIndex) / ezIndex / ((compareItem.cost > 0) ? compareItem.cost : 0) : 0;
+				itemArray[i].newcost = (compareItem.cost == 0) ? -itemArray[i].cost : compareItem.cost;
+			};
+		};
+		var displayArray = itemArray.slice(0);
+		for (var i = 0; i < displayArray.length; i++) {
+			displayArray[i].index = i;
+		};
+		if (output == "ome") {
+			displayArray.sort(function (a, b) {
+				if (a.efficiency == b.efficiency) {
+					return b.dmg - a.dmg;
+				} else {
+					return b.efficiency - a.efficiency;
+				};
+			});
+		} else {
+			displayArray.sort(function (a, b) {
+				if (a.dmg == b.dmg) {
+					if (a.equipped && b.equipped) {
+						if (a.name == b.name) {
+							return b.grade - a.grade;
+						} else {
+							return b.name - a.name;
+						};
+					} else {
+						if (a.equipped) {
+							return -1;
+						} else {
+							return 1;
+						};
+					};
+				} else {
+					if (output == "syn" && currentArray.length > 9) {
+						return a.dmg - b.dmg;
+					} else {
+						return b.dmg - a.dmg;
+					};
+				};
+			});
+		};
+		for (var i = 0; i < displayArray.length; i++) {
+			var optionName = document.getElementById(output + "Name" + i);
+			var optionStats = document.getElementById(output + "Stats" + i);
+			var optionRow = optionName.parentNode;
+			optionRow.id = output + displayArray[i].index;
+			if (output != "att") {
+				optionRow.onclick = function () {
+					var index = this.id.slice(3);
+					selectOption(output, index);
+				};
+			};
+			optionName.innerHTML = displayArray[i].name + ((displayArray[i].grade) ? " (Grade " + displayArray[i].grade + ")" : "") + ((displayArray[i].rank) ? " (Rank " + displayArray[i].rank + ")" : "");
+			optionName.style.backgroundColor = "initial";
+			optionName.style.color = "initial";
+			optionStats.innerHTML = "";
+			for (k in displayArray[i]) {
+				switch (k) {
+					case "name":
+					case "dmg":
+					case "cost":
+					case "newcost":
+					case "grade":
+					case "rank":
+					case "efficiency":
+					case "index":
+						break;
+					case "equipped":
+						optionName.style.backgroundColor = "2080F0";
+						optionName.style.color = "FFFFFF";
+						break;
+					default:
+						optionStats.innerHTML += "&nbsp;" + k + ": " + displayArray[i][k] + "<br>";
+						break;
+				};
+			};
+			if (output == "syn" && currentArray.length > 9) {
+				var dmgDelta = (ezIndex - displayArray[i].dmg) / displayArray[i].dmg;
+			} else {
+				var dmgDelta = (displayArray[i].dmg - ezIndex) / ezIndex;
+			};
+			document.getElementById(output + "DPS" + i).innerHTML = ((displayArray[i].dmg >= ezIndex) ? "+ " : "") + fixedToPercent(dmgDelta) + "&nbsp;";
+			if (output == "ome") {
+				document.getElementById(output + "Efficiency" + i).innerHTML = fixedToPercent(displayArray[i].efficiency) + "&nbsp;";
+				document.getElementById(output + "Cost" + i).innerHTML = displayArray[i].newcost + "&nbsp;";
+			};
+		};
+	};
+	for (var i = 0; i < masterOptionArray.length; i++) {
+		optionDPS(masterOptionArray[i].array, masterOptionArray[i].name.substr(0, 3).toLowerCase());
+	};
+// Stat weighting
+	var compositeDR = tagThing.physical * ezDB.physical + tagThing.energy * ezDB.energy + tagThing.mental * ezDB.mental;
+	var compositeCR = tagThing.physical * ezCR.physical + tagThing.energy * ezCR.energy + tagThing.mental * ezCR.mental;
+	var up = {CR: {value: (ezIndex * 1.01 / compositeDR - 1) / (stats.CD.actual + stats.BR.actual * (stats.BD.actual - stats.CD.actual) - 1),
+			subtype: {}},
+		CD: {value: (ezIndex * 1.01 / compositeDR + compositeCR - (stats.BD.actual - stats.CD.actual) * compositeCR * stats.BR.actual - 1) / compositeCR - stats.CD.actual},
+		BR: {value: (ezIndex * 1.01 / compositeDR + compositeCR - stats.CD.actual * compositeCR - 1) / (compositeCR * (stats.BD.actual - stats.CD.actual))},
+		BD: {value: (ezIndex * 1.01 / compositeDR - 1 + compositeCR * (1 - stats.CD.actual + stats.CD.actual * stats.BR.actual)) / (compositeCR * stats.BR.actual) - stats.BD.actual},
+		DR: {value: 0.01 * compositeDR,
+			subtype: {}},
+		DB: {value: 0.01 * compositeDR,
+			subtype: {}},
+		HP: {value: 0.01 * compositeDR / tagThing.HP},
+		SP: {value: 0.01 * compositeDR / tagThing.SP},
+		DF: {value: 0.01 * compositeDR / tagThing.DF}
+	};
+	var bonusCR = stats.CR.actual - stats.CR.total * 0.99 / (stats.CR.total + 3601);
+	up.CR.value = (up.CR.value > 0 && up.CR.value - bonusCR < 0.99) ? up.CR.value - compositeCR : 0;
+	var bonusBR = stats.BR.actual - stats.BR.total * 0.75 / (stats.BR.total + 3601);
+	up.BR.value = (up.BR.value > 0 && up.BR.value - bonusBR < 0.75) ? brutToRating(up.BR.value - bonusBR) - stats.BR.total : 0;
+	for (k in stats.CR.subtype) {
+		up.CR.subtype[k] = {value: up.CR.value / tagThing[k]};
+		up.CR.subtype[k].value = critToRating(up.CR.subtype[k].value + compositeCR - bonusCR) - critToRating(compositeCR - bonusCR);
+	};
+	up.CR.value = critToRating(up.CR.value + compositeCR - bonusCR) - critToRating(compositeCR - bonusCR);
+	for (k in stats.DR.subtype) {
+		up.DR.subtype[k] = {value: up.DR.value / tagThing[k]};
+		up.DB.subtype[k] = {value: up.DR.value / tagThing[k]};
+	};
+// print tag percentages
+	for (k in tagThing) {
+		document.getElementById("tag_EZ" + k).innerHTML = "" + fixedToPercent(tagThing[k]);
+	};
+// print sheet / totals / actuals
+	var printStats = function (prefix, subtype) {
+		var fieldName = prefix + ((subtype) ? subtype : "");
+		var currentStat = (subtype) ? stats[prefix].subtype[subtype] : stats[prefix];
+		var linkedValue = ((currentStat.linked) ? stats[prefix].value : 0) + calcLinks(prefix, subtype);
+		if (!(currentStat.nosheet)) {
+			document.getElementById("sheet_" + fieldName).innerHTML = (currentStat.percent) ? fixedToPercent(currentStat.value + linkedValue) : currentStat.value + linkedValue;
+		};
+		document.getElementById("total_" + fieldName).innerHTML = (currentStat.percent) ? fixedToPercent(currentStat.total) : currentStat.total;
+		document.getElementById("actual_" + fieldName).innerHTML = ((prefix == "CD" || prefix == "BD") ? "x " : "") + ((prefix == "DR" || prefix == "DB") ? "+ " : "") + ((currentStat.integertotal) ? currentStat.actual : fixedToPercent(currentStat.actual));
+	};
+	for (x in stats) {
+		printStats(x);
+		if (stats[x].subtype) {
+			for (y in stats[x].subtype) {
+				printStats(x, y);
+			};
+		};
+	};
+	document.getElementById("tag_EZtotal").innerHTML = fixedToPercent(ezIndex);
+	var printWeights = function (prefix, subtype) {
+		var fieldName = prefix + ((subtype) ? subtype : "");
+		var fieldValue = (subtype) ? up[prefix].subtype[subtype].value : up[prefix].value;
+		var value = 0;
+		var weight = 0;
+		switch(prefix) {
+			case "CR":
+			case "BR":
+				value = Math.round(fieldValue);
+				weight = fixedToPercent(up.DR.value * 4000 / fieldValue);
+				break;
+			case "CD":
+			case "BD":
+				value = Math.round(fieldValue * 8000);
+				weight = fixedToPercent(up.DR.value * 4000 / (fieldValue * 8000));
+				break;
+			case "DR":
+			case "HP":
+			case "SP":
+			case "DF":
+				value = Math.round(fieldValue * 4000);
+				weight = fixedToPercent(up.DR.value / fieldValue);
+				break;
+			case "DB":
+				value = fixedToPercent(fieldValue);
+				weight = Math.round(up.DR.value / fieldValue * 40);
+				break;
+		};
+		if (value <= 0 || value == Infinity || weight <= 0 || weight == Infinity) {
+			value = "";
+			weight = "";
+		};
+		document.getElementById("value_" + fieldName).innerHTML = value;
+		document.getElementById("weight_" + fieldName).innerHTML = weight;
+	};
+	for (x in up) {
+		printWeights(x);
+		if (up[x].subtype) {
+			for (y in up[x].subtype) {
+				printWeights(x, y);
+			};
+		};
+	};
+	saveState();
+};
+
+function calcIndex (damageMult, critChance, critMult, brutChance, brutMult) {
+	damageMult = Math.max(0, damageMult);
+	critChance = Math.max(0, critChance);
+	critMult = Math.max(0, critMult);
+	brutChance = Math.max(0, brutChance);
+	brutMult = Math.max(0, brutMult);
+	var damageIndex = damageMult * ((1 - critChance) + (critMult * (critChance - (critChance * brutChance))) + (brutMult * (critChance * brutChance)));
+	return damageIndex;
+};
+
+function critToRating (chance) {
+	if (chance > 0.99) {
+		chance = 0.99;
+	};
+	return chance * 3601 / (0.99 - chance);
+};
+
+function brutToRating (chance) {
+	if (chance > 0.75) {
+		chance = 0.75;
+	};
+	return chance * 3601 / (0.75 - chance);
+};
+
+function percentToFixed (percentString) {
+	return Number(percentString.slice(0, percentString.length - 1)) / 100;
+};
+
+function fixedToPercent (fixed) {
+	return (Math.round(fixed * 10000) / 100).toFixed(2) + "%";
+};
+
+function kbinput (keypress) {
+	var keyCode = keypress.which
+	if (keyCode == 8 || keyCode == 9 || keyCode == 38 || keyCode == 40) {
+		keypress.preventDefault();
+	};
+	if (keyCode == 9) {
+		keyCode = (keypress.shiftKey) ? 37 : 40;
+	};
+	readText (selectedField);
+	switch (keyCode) {
+		case 46:
+			textbuffer = "";
+			document.getElementById(selectedField).innerHTML = textbuffer + textsuffix;
+			editing = 1;
+			break;
+		case 8:
+			if (textbuffer.length > 0) {
+				textbuffer = textbuffer.slice(0, textbuffer.length-1);
+				document.getElementById(selectedField).innerHTML = textbuffer + textsuffix;
+			};
+			editing = 1;
+			break;
+		case 13:
+		case 37:
+		case 38:
+		case 39:
+		case 40:
+			var fieldArray = document.getElementsByClassName("input");
+			var fieldIndex = 0;
+			while (fieldArray[fieldIndex].id != selectedField) {
+				fieldIndex++;
+			};
+			switch (keyCode) {
+				case 37:
+				case 38:
+					fieldIndex = (fieldIndex == 0) ? fieldArray.length - 1 : fieldIndex - 1;
+					while (fieldArray[fieldIndex].parentNode.hidden) {
+						fieldIndex = (fieldIndex == 0) ? fieldArray.length - 1 : fieldIndex - 1;
+					};
+					break;
+				case 13:
+				case 39:
+				case 40:
+					fieldIndex = (fieldIndex == fieldArray.length - 1) ? 0 : fieldIndex + 1;
+					while (fieldArray[fieldIndex].parentNode.hidden) {
+						fieldIndex = (fieldIndex == fieldArray.length - 1) ? 0 : fieldIndex + 1;
+					};
+					break;
+			};
+			selectField(fieldArray[fieldIndex].id);
+			break;
+		default:
+			if (keyCode > 95 && keyCode < 106) {
+				keyCode -= 48;
+			};
+			if (keyCode == 110 || keyCode == 190) {
+				keyCode = 46;
+			};
+			if (keyCode == 109 || keyCode == 173) {
+				keyCode = 45;
+			};
+			if ((keyCode > 47 && keyCode < 58) || keyCode == 45 || keyCode == 46) {
+				if (editing == 0) {
+					textbuffer = String.fromCharCode(keyCode);
+					editing = 1;
+				} else {
+					if (keyCode == 45) {
+						if (textbuffer.substr(0,1) == "-") {
+							textbuffer = textbuffer.substr(1);
+						} else {
+							if (textbuffer == "0") {
+								textbuffer = "";
+							};
+							textbuffer = "-" + textbuffer;
+						};
+					} else if (keyCode != 46 || textbuffer.indexOf(".") == -1) {
+						var maxDigits = 10;
+						if (textbuffer.length < maxDigits) {
+							textbuffer += String.fromCharCode(keyCode);
+						};
+					};
+				};
+				document.getElementById(selectedField).innerHTML = textbuffer + textsuffix;
+			};
+			break;
+	};
+};
+
+function resetChecks() {
+	var checkArray = document.getElementsByClassName("checkbox");
+	for (var i = 0; i < checkArray.length; i++) {
+		checkArray[i].checked = false;
+	};
+	tagCheck();
+};
+
+function tagCheck() {
+	var checkArray = document.getElementsByClassName("checkbox");
+	for (var i = 0; i < checkArray.length; i++) {
+		var tag = checkArray[i].id.substr(5);
+		tag = (tag.length > 2) ? tag.toLowerCase() : tag;
+		toggleBlock(tag, checkArray[i].checked);
+	};
+};
+
+function toggleBlock(block, state) {
+	var blockArray = document.getElementsByClassName(block);
+	for (var i = 0; i < blockArray.length; i++) {
+		blockArray[i].hidden = (state == true) ? false : true;
+	};
+};
+
+function saveState () {
+	var rawString = "bas";
+	for (k in stats) {
+		if (!(stats[k].integertotal)) {
+			var integerString = (stats[k].percent) ? Math.round(stats[k].value * 10000) : stats[k].value;
+			rawString += integerTo64(integerString) + ((k == "DB") ? "" : ",");
+		};
+	};
+	for (k in tagThing) {
+		if (tagThing[k] != "0") {
+			rawString += ":";
+			var tagPercent = Math.round(tagThing[k] * 10000);
+			if (k != "HP" && k != "SP" && k != "DF" && k != "TN") {
+				var tagCR = (stats.CR.subtype[k]) ? stats.CR.subtype[k].value : "-";
+				var tagDR = (stats.DR.subtype[k]) ? stats.DR.subtype[k].value : "-";
+				var tagDB = (stats.DB.subtype[k]) ? Math.round(stats.DB.subtype[k].value * 10000) : "-";
+				rawString += k.slice(0, 3) + integerTo64(tagPercent) + "," + integerTo64(tagCR) + "," + integerTo64(tagDR) + "," + integerTo64(tagDB);
+			} else {
+				var tagValue = (stats[k]) ? stats[k].value : "-";
+				rawString += k + "_" + integerTo64(tagPercent) + "," + integerTo64(tagValue);
+			};
+		};
+	};
+	var equipcode = {};
+	for (var i = 0; i < masterOptionArray.length; i++) {
+		var stem = masterOptionArray[i].name.substr(0, 3).toLowerCase();
+		switch (stem) {
+			case "ble":
+			case "leg":
+			case "med":
+			case "rel":
+				equipcode[stem] = 0;
+				for (var j = 0; j < masterOptionArray[i].array.length; j++) {
+					if (masterOptionArray[i].array[j].equipped) {
+						equipcode[stem] = j + 1;
+					};
+				};
+				break;
+			case "cos":
+			case "syn":
+				equipcode[stem] = [];
+				for (var j = 0; j < masterOptionArray[i].array.length; j++) {
+					if (masterOptionArray[i].array[j].equipped) {
+						equipcode[stem].push(j + 1);
+					};
+				};
+				break;
+			case "ome":
+				break;
+		};
+	};
+	if (equipcode.leg + equipcode.med + equipcode.rel + equipcode.ble > 0) {
+		rawString += ":equ" + integerTo64(equipcode.leg) + "," + integerTo64(equipcode.med) + ","  + integerTo64(equipcode.rel) + "," + integerTo64(equipcode.ble);
+	};
+	if (equipcode.syn.length > 0) {
+		rawString += ":syn";
+		for (var i = 0; i < equipcode.syn.length; i++) {
+			rawString += integerTo64(equipcode.syn[i]) + ((i < equipcode.syn.length - 1) ? "," : "");
+		};
+	};
+	if (equipcode.cos.length > 0) {
+		rawString += ":cos";
+		for (var i = 0; i < equipcode.cos.length; i++) {
+			rawString += integerTo64(equipcode.cos[i]) + ((i < equipcode.cos.length - 1) ? "," : "");
+		};
+	};
+	var cleanURL = location.href.substr(0,location.href.indexOf("?"));
+	document.getElementById("permalink").href = cleanURL + "?" + rawString;
+};
+
+function integerTo64 (number) {
+	var digit = "";
+	var result = "";
+	while (number >= 64) {
+		digit = number % 64;
+		result+= base64.charAt(digit);
+		number = Math.floor(number / 64);
+	};
+	result += base64.charAt(number);
+	return result;
+};
+
+function integerFrom64 (string) {
+	result = 0;
+	digits = 0;
+	while (string.length > 0) {
+		result += base64.indexOf(string.substr(0, 1)) * Math.pow(64, digits);
+		digits++;
+		string = string.substr(1, string.length);
+	};
+	return result;
+	return base64.indexOf("G");
+};
+-->
+</script>
+</head>
+<body onload="initialize();" onKeyDown="kbinput(event);">
+<a id="permalink" href="" style="font-family:arial;">configuration permalink</a>
+<br>
+<br>
+<table onclick="tagCheck();">
+<tr><td class="heading center" colspan=3>Power Tags</td>
+<td class="heading center" colspan=3>Stat Conversion</td>
+</tr>
+<tr>
+<td><label><input class="checkbox" type=checkbox id="checkPhysical">Physical</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkMelee">Melee</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkDot">DOT</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkHP">Health</label></td>
+</tr>
+<tr>
+<td><label><input class="checkbox" type=checkbox id="checkEnergy">Energy</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkRanged">Ranged</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkBoss">Boss</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkSP">Spirit</label></td>
+</tr>
+<tr>
+<td><label><input class="checkbox" type=checkbox id="checkMental">Mental</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkArea">Area</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkUnaware">Unaware</label></td>
+<td><label><input class="checkbox" type=checkbox id="checkDF">Defense</label></td>
+</tr>
+<tr>
+<td></td>
+<td><label><input class="checkbox" type=checkbox id="checkMovement">Movement</label></td>
+<td></td>
+<td><label><input class="checkbox" type=checkbox id="checkTN">Tenacity</label></td>
+</tr>
+</table>
+<table id="tagTable">
+<tr>
+<td class="heading">Damage Types</td>
+</tr>
+<tr class="physical">
+<td>&nbsp; Physical</td>
+<td class="field input tag" id="tag_EZphysical" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="energy">
+<td>&nbsp; Energy</td>
+<td class="field input tag" id="tag_EZenergy" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="mental">
+<td>&nbsp; Mental</td>
+<td class="field input tag" id="tag_EZmental" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr>
+<td class="heading">Power Tags</td>
+</tr>
+<tr class="melee">
+<td>&nbsp; Melee</td>
+<td class="field input tag" id="tag_EZmelee" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="ranged">
+<td>&nbsp; Ranged</td>
+<td class="field input tag" id="tag_EZranged" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="area">
+<td>&nbsp; Area</td>
+<td class="field input tag" id="tag_EZarea" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="dot">
+<td>&nbsp; DOT</td>
+<td class="field input tag" id="tag_EZdot" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="movement">
+<td>&nbsp; Movement</td>
+<td class="field input tag" id="tag_EZmovement" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr>
+<td class="heading">Status</td>
+</tr>
+<tr class="boss">
+<td>&nbsp; Boss</td>
+<td class="field input tag" id="tag_EZboss" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="unaware">
+<td>&nbsp; Unaware</td>
+<td class="field input tag" id="tag_EZunaware" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr>
+<td class="heading">Stat Conversion</td>
+</tr>
+<tr class="HP">
+<td>&nbsp; Health &rarr; DR</td>
+<td class="field input tag" id="tag_EZHP" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="SP">
+<td>&nbsp; Spirit &rarr; DR</td>
+<td class="field input tag" id="tag_EZSP" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="DF">
+<td>&nbsp; Defense &rarr; DR</td>
+<td class="field input tag" id="tag_EZDF" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr class="TN">
+<td>&nbsp; Tenacity &rarr; CR</td>
+<td class="field input tag" id="tag_EZTN" onclick="selectField(this.id);">0.00%</td>
+</tr>
+<tr>
+<td class="heading">Damage Index:</td>
+<td class="field output" id="tag_EZtotal">0.00%</td>
+</tr>
+</table>
+
+<table id="rotationTable" hidden>
+<tr>
+<td class="heading">Advanced</td>
+<td><button type="button" disabled>Basic</button></td>
+</tr>
+</table>
+
+<br>
+<table id="statsTable">
+</table>
+<br>
+<table id="optionHeadings">
+<tr></tr>
+</table>
+<a id="comparisons"></a>
+<br>
+<a id=debug></a>
+</body></html>
