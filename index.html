@@ -824,7 +824,7 @@ function update () {
 			item.BD = stats.BD.actual + item.BD / 8000;
 			for (k in stats.CR.subtype) {
 				if (stats.CR.subtype[k].damagetype) {
-					item.CR = newCR[k] + ((compareItem.CR) ? compareItem.CR : 0) + cnvCR + item.INT * 30 + tagThing.TN * (item.TN - ((equipped.TN) ? equipped.TN : 0) - worn.SPE * 15);
+					item.CR = newCR[k] + ((compareItem.CR) ? compareItem.CR : 0) + item.INT * 30 + tagThing.TN * item.TN;
 					item.CR += (compareItem["CR" + k]) ? compareItem["CR" + k] : 0;
 					for (tag in stats.CR.subtype) {
 						if (!(stats.CR.subtype[tag].damagetype)) {
