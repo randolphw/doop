@@ -12,7 +12,14 @@ td {width: 100px; font-family: Arial; font-size: small; vertical-align: top;}
 .output {border: #BB0000 solid 1px;}
 .button {border: black solid 1px;}
 .statbutton {width: 115px; outline: black solid 1px;}
-.optionname {width: 210px;}
+.legname {width: 160px;}
+.medname {width: 190px;}
+.relname {width: 210px;}
+.blename {width: 150px;}
+.synname {width: 150px;}
+.omename {width: 290px;}
+.cosname {width: 160px;}
+.attname {width: 100px;}
 .optiondelta {outline: #BB0000 solid 1px; text-align: right;}
 .optionefficiency {outline: #FFAA00 solid 1px; text-align: right;}
 .optioncost {outline: gray solid 1px; text-align: right;}
@@ -184,14 +191,14 @@ function initialize () {
 		for (var i = 0; i < optionArray.length; i++) {
 			var newRow = optionTable.insertRow(i);
 			var newCell = newRow.insertCell(0);
-			newCell.className = "optionname";
+			newCell.className = stem + "name";
 			var innerTable = document.createElement("TABLE");
 			innerTable.cellSpacing = 0;
 			innerTable.cellPadding = 0;
 			var innerRow = innerTable.insertRow(0);
 			var innerCell = innerRow.insertCell(0);
 			innerCell.id = stem + "Name" + i;
-			innerCell.className = "optionname";
+			innerCell.className = stem + "name";
 			newCell.appendChild(innerTable);
 			newCell = newRow.insertCell(1);
 			var innerTable = document.createElement("TABLE");
@@ -790,12 +797,6 @@ function update () {
 						};
 						break;
 					case "ome":
-						for (var j = 0; j < currentArray.length; j++) {
-							if (currentArray[j].name == itemArray[i].name) {
-								opportunityCost(currentArray[j]);
-							};
-						};
-						break;
 					case "syn":
 						if (itemArray[i].equipped) {
 							var compareItem = {};
@@ -861,10 +862,10 @@ function update () {
 					itemIndex += tagThing[k] * calcIndex(item.DB, item.CR, item.CD, item.BR, item.BD);
 				};
 			};
-			itemArray[i].dmg = (output == "syn" && itemArray[i].equipped) ? (ezIndex - itemIndex) / itemIndex : (itemIndex - ezIndex) / ezIndex;
+			itemArray[i].dmg = ((output == "ome" || output == "syn") && itemArray[i].equipped) ? (ezIndex - itemIndex) / itemIndex : (itemIndex - ezIndex) / ezIndex;
 // TODO: Add prereq tree to Omegas and subtract prereqs that are already taken
 			if (output == "ome") {
-				itemArray[i].efficiency = (itemIndex > ezIndex) ? 4000 * (itemIndex - ezIndex) / ezIndex / ((compareItem.cost > 0) ? compareItem.cost : 0) : 0;
+				itemArray[i].efficiency = (compareItem.cost > 0 || itemArray[i].equipped) ? 4000 * itemArray[i].dmg / ((itemArray[i].equipped) ? itemArray[i].cost : compareItem.cost) : 0;
 				itemArray[i].newcost = (compareItem.cost == 0) ? -itemArray[i].cost : compareItem.cost;
 			};
 		};
@@ -936,7 +937,7 @@ function update () {
 						break;
 				};
 			};
-			if (output == "syn" && displayArray[i].equipped) {
+			if ((output == "ome" || output == "syn") && displayArray[i].equipped) {
 				var dmgDisplay = "(" + ((displayArray[i].dmg > 0) ? "+ " : "") + fixedToPercent(displayArray[i].dmg) + ")&nbsp;"
 			} else {
 				var dmgDisplay = ((displayArray[i].dmg > 0) ? "+ " : "") + fixedToPercent(displayArray[i].dmg) + "&nbsp;"
@@ -944,7 +945,7 @@ function update () {
 			document.getElementById(output + "DPS" + i).innerHTML = dmgDisplay;
 			if (output == "ome") {
 				document.getElementById(output + "Efficiency" + i).innerHTML = fixedToPercent(displayArray[i].efficiency) + "&nbsp;";
-				document.getElementById(output + "Cost" + i).innerHTML = displayArray[i].newcost + "&nbsp;";
+				document.getElementById(output + "Cost" + i).innerHTML = ((displayArray[i].equipped) ? "(" + -displayArray[i].newcost + ")" : displayArray[i].newcost) + "&nbsp;";
 			};
 		};
 	};
