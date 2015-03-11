@@ -745,6 +745,11 @@ var omeArray = [
 		{name: "Harpy", CR: 36, BR: 36, rank: 3, cost: 66},
 		{name: "Harpy", CR: 48, BR: 48, rank: 4, cost: 92},
 		{name: "Harpy", CR: 60, BR: 60, rank: 5, cost: 120},
+		{name: "Lyra", CR: 30, CD: 30, rank: 1, cost: 20 + 40},
+		{name: "Lyra", CR: 60, CD: 60, rank: 2, cost: 20 + 90},
+		{name: "Lyra", CR: 90, CD: 90, rank: 3, cost: 20 + 150},
+		{name: "Lyra", CR: 120, CD: 120, rank: 4, cost: 20 + 220},
+		{name: "Lyra", CR: 150, CD: 150, rank: 5, cost: 20 + 300},
 ];
 
 var masterOptionArray = [
