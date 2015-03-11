@@ -375,7 +375,7 @@ var omeArray = [
 		{name: "Melt Face", BD: 2220, rank: 37, cost: 1 + 888},
 		{name: "Melt Face", BD: 2280, rank: 38, cost: 1 + 931},
 		{name: "Melt Face", BD: 2340, rank: 39, cost: 1 + 975},
-		{name: "Melt Face", BD: 24000, rank: 40, cost: 1 + 1020},
+		{name: "Melt Face", BD: 2400, rank: 40, cost: 1 + 1020},
 		{name: "Shadow King's Possession", BR: 24, DBsummon: 0.01, CR: 24, rank: 1, cost: 50},
 		{name: "Shadow King's Possession", BR: 48, DBsummon: 0.02, CR: 24, rank: 2, cost: 102},
 		{name: "Shadow King's Possession", BR: 72, DBsummon: 0.03, CR: 24, rank: 3, cost: 156},
