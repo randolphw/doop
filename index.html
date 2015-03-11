@@ -662,6 +662,9 @@ function update () {
 				break;
 			case "DR":
 				currentStat.total = ((currentStat.linked) ? stats[prefix].total : 0) + currentStat.value + ((subtype) ? 0 : cnvDR) + ((equipStat) ? equipStat : 0);
+				if ((tagThing.physical * tagThing.energy > 0 || tagThing.physical * tagThing.mental > 0 || tagThing.energy * tagThing.mental > 0) && currentStat.linked && equipped.DRcosmic > 0) {
+					currentStat.total += equipped.DRcosmic;
+				};
 				currentStat.actual = currentStat.total / 4000;
 				break;
 			case "DB":
@@ -852,7 +855,7 @@ function update () {
 						};
 					};
 					if (tagThing.physical * tagThing.energy > 0 || tagThing.physical * tagThing.mental > 0 || tagThing.energy * tagThing.mental > 0) {
-						item.DB += (compareItem.DRcosmic) ? itemArray[i].DRcosmic / 4000 : 0;
+						item.DB += (compareItem.DRcosmic) ? compareItem.DRcosmic / 4000 : 0;
 					};
 					item.DB += ezDB[k];
 					itemIndex += tagThing[k] * calcIndex(item.DB, item.CR, item.CD, item.BR, item.BD);
