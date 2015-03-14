@@ -18,7 +18,7 @@ td {width: 100px; font-family: Arial; font-size: small; vertical-align: top;}
 .blename {width: 150px;}
 .synname {width: 150px;}
 .omename {width: 290px;}
-.cosname {width: 160px;}
+.cosname {width: 200px;}
 .attname {width: 100px;}
 .optiondelta {outline: #BB0000 solid 1px; text-align: right;}
 .optionefficiency {outline: #FFAA00 solid 1px; text-align: right;}
@@ -180,64 +180,71 @@ function initialize () {
 	newCell = newRow.insertCell(5);
 	newCell.className = "heading center";
 	newCell.innerHTML = "Weight in DR";
-	var buildOptionTable = function (optionName, optionArray) {
-		var stem = optionName.substr(0, 3).toLowerCase();
+	var buildOptionTable = function (system) {
+		var systemObject = masterOptions[system];
+		var stem = system.substr(0, 3).toLowerCase();
 		var optionTable = document.createElement("TABLE");
 		optionTable.id = stem + "Table";
 		if (stem != "leg") {
 			optionTable.hidden = true;
 		};
 		document.getElementById("comparisons").appendChild(optionTable);
-		for (var i = 0; i < optionArray.length; i++) {
-			var newRow = optionTable.insertRow(i);
-			var newCell = newRow.insertCell(0);
-			newCell.className = stem + "name";
-			var innerTable = document.createElement("TABLE");
-			innerTable.cellSpacing = 0;
-			innerTable.cellPadding = 0;
-			var innerRow = innerTable.insertRow(0);
-			var innerCell = innerRow.insertCell(0);
-			innerCell.id = stem + "Name" + i;
-			innerCell.className = stem + "name";
-			newCell.appendChild(innerTable);
-			newCell = newRow.insertCell(1);
-			var innerTable = document.createElement("TABLE");
-			innerTable.cellSpacing = 0;
-			innerTable.cellPadding = 0;
-			var innerRow = innerTable.insertRow(0);
-			var innerCell = innerRow.insertCell(0);
-			innerCell.id = stem + "DPS" + i;
-			innerCell.className = "optiondelta";
-			newCell.appendChild(innerTable);
-			newCell = newRow.insertCell(2);
-			var innerTable = document.createElement("TABLE");
-			innerTable.cellSpacing = 0;
-			innerTable.cellPadding = 0;
-			var innerRow = innerTable.insertRow(0);
-			var innerCell = innerRow.insertCell(0);
-			innerCell.id = stem + "Stats" + i;
-			innerCell.className = "optionstats " + stem + "stats";
-			innerCell.hidden = true;
-			newCell.appendChild(innerTable);
-			if (optionName == "Omega Points") {
+		var optionIndex = 0;
+		for (option in systemObject) {
+			var thisOption = systemObject[option];
+			var ranks = (thisOption.ranks) ? thisOption.ranks : 1;
+			for (var i = 0; i < ranks; i++) {
+				var newRow = optionTable.insertRow(optionIndex);
+				var newCell = newRow.insertCell(0);
+				newCell.className = stem + "name";
+				var innerTable = document.createElement("TABLE");
+				innerTable.cellSpacing = 0;
+				innerTable.cellPadding = 0;
+				var innerRow = innerTable.insertRow(0);
+				var innerCell = innerRow.insertCell(0);
+				innerCell.id = stem + "Name" + optionIndex;
+				innerCell.className = stem + "name";
+				newCell.appendChild(innerTable);
+				newCell = newRow.insertCell(1);
+				var innerTable = document.createElement("TABLE");
+				innerTable.cellSpacing = 0;
+				innerTable.cellPadding = 0;
+				var innerRow = innerTable.insertRow(0);
+				var innerCell = innerRow.insertCell(0);
+				innerCell.id = stem + "DPS" + optionIndex;
+				innerCell.className = "optiondelta";
+				newCell.appendChild(innerTable);
 				newCell = newRow.insertCell(2);
 				var innerTable = document.createElement("TABLE");
 				innerTable.cellSpacing = 0;
 				innerTable.cellPadding = 0;
 				var innerRow = innerTable.insertRow(0);
 				var innerCell = innerRow.insertCell(0);
-				innerCell.id = stem + "Efficiency" + i;
-				innerCell.className = "optionefficiency";
+				innerCell.id = stem + "Stats" + optionIndex;
+				innerCell.className = "optionstats " + stem + "stats";
+				innerCell.hidden = true;
 				newCell.appendChild(innerTable);
-				newCell = newRow.insertCell(3);
-				var innerTable = document.createElement("TABLE");
-				innerTable.cellSpacing = 0;
-				innerTable.cellPadding = 0;
-				var innerRow = innerTable.insertRow(0);
-				var innerCell = innerRow.insertCell(0);
-				innerCell.id = stem + "Cost" + i;
-				innerCell.className = "optioncost";
-				newCell.appendChild(innerTable);
+				if (system == "Omega_Points") {
+					newCell = newRow.insertCell(2);
+					var innerTable = document.createElement("TABLE");
+					innerTable.cellSpacing = 0;
+					innerTable.cellPadding = 0;
+					var innerRow = innerTable.insertRow(0);
+					var innerCell = innerRow.insertCell(0);
+					innerCell.id = stem + "Efficiency" + optionIndex;
+					innerCell.className = "optionefficiency";
+					newCell.appendChild(innerTable);
+					newCell = newRow.insertCell(3);
+					var innerTable = document.createElement("TABLE");
+					innerTable.cellSpacing = 0;
+					innerTable.cellPadding = 0;
+					var innerRow = innerTable.insertRow(0);
+					var innerCell = innerRow.insertCell(0);
+					innerCell.id = stem + "Cost" + optionIndex;
+					innerCell.className = "optioncost";
+					newCell.appendChild(innerTable);
+				};
+				optionIndex++;
 			};
 		};
 		var newRow = optionTable.insertRow(0);
@@ -247,7 +254,7 @@ function initialize () {
 		newCell = newRow.insertCell(1);
 		newCell.className = "heading center";
 		newCell.innerHTML = "Damage";
-		if (optionName != "Attributes") {
+		if (system != "Attributes") {
 			newCell = newRow.insertCell(2);
 			newCell.className = "statbutton center";
 			newCell.innerHTML = "show details";
@@ -266,32 +273,44 @@ function initialize () {
 				};
 			};
 		};
-		if (optionName == "Omega Points") {
+		if (system == "Omega_Points") {
 			newCell = newRow.insertCell(2);
 			newCell.className = "heading center";
 			newCell.innerHTML = "Efficiency";
 			newCell = newRow.insertCell(3);
 			newCell.className = "heading center";
-			newCell.innerHTML = "Cost";
+			newCell.id = "omegaTotal";
+			newCell.innerHTML = "0/7500 &Omega;";
 		};
 	};
-	for (var i = 0; i < masterOptionArray.length; i++) {
+	var systemIndex = 0;
+	for (system in masterOptions) {
 		var headingRow = document.getElementById("optionHeadings").rows[0];
-		var newCell = headingRow.insertCell(i);
+		var newCell = headingRow.insertCell(systemIndex);
 		newCell.className = "button center";
-		newCell.innerHTML = masterOptionArray[i].name;
-		if (i == 0) {
+		newCell.innerHTML = system.replace("_", " ");
+		switch (system) {
+			case "Relics":
+				newCell.innerHTML += " (1000)";
+				break;
+			case "Blessings":
+				newCell.innerHTML += " (4)";
+				break;
+		};
+		if (systemIndex == 0) {
 			newCell.style.backgroundColor = "666666";
 			newCell.style.color = "FFFFFF";
 		};
-		buildOptionTable(masterOptionArray[i].name, masterOptionArray[i].array);
+		buildOptionTable(system);
 		newCell.onclick = function () {
-			for (var i = 0; i < masterOptionArray.length; i++) {
-				var stem = masterOptionArray[i].name.substr(0, 3).toLowerCase();
+			var systemIndex = 0;
+			for (system in masterOptions) {
+				var stem = system.substr(0, 3).toLowerCase();
 				var optionTable = document.getElementById(stem + "Table");
 				optionTable.hidden = true;
-				this.parentNode.cells[i].style.backgroundColor = "initial";
-				this.parentNode.cells[i].style.color = "initial";
+				this.parentNode.cells[systemIndex].style.backgroundColor = "initial";
+				this.parentNode.cells[systemIndex].style.color = "initial";
+				systemIndex++;
 			};
 			this.style.backgroundColor = "666666";
 			this.style.color = "FFFFFF";
@@ -299,6 +318,7 @@ function initialize () {
 			var optionTable = document.getElementById(stem + "Table");
 			optionTable.hidden = false;
 		};
+		systemIndex++;
 	};
 	resetChecks();
 	selectedField = "sheet_AS";
@@ -379,22 +399,26 @@ function initialize () {
 				break;
 			case "equ":
 				if (ratings[0] > 0) {
-					selectOption("leg", ratings[0] - 1);
+					selectOption("Legendary", Object.keys(masterOptions["Legendary"])[ratings[0] - 1]);
 				};
 				if (ratings[1] > 0) {
-					selectOption("med", ratings[1] - 1);
+					selectOption("Medallion", Object.keys(masterOptions["Medallion"])[ratings[1] - 1]);
 				};
 				if (ratings[2] > 0) {
-					selectOption("rel", ratings[2] - 1);
+					selectOption("Relics", Object.keys(masterOptions["Relics"])[ratings[2] - 1]);
 				};
 				if (ratings[3] > 0) {
-					selectOption("ble", ratings[3] - 1);
+					selectOption("Blessings", Object.keys(masterOptions["Blessings"])[ratings[3] - 1]);
 				};
 				break;
 			case "cos":
+				for (var j = 0; j < ratings.length; j++) {
+					selectOption("Costume_Affixes", Object.keys(masterOptions["Costume_Affixes"])[ratings[j] - 1]);
+				};
+				break;
 			case "syn":
 				for (var j = 0; j < ratings.length; j++) {
-					selectOption(prefix, ratings[j] - 1);
+					selectOption("Synergies", Object.keys(masterOptions["Synergies"])[ratings[j] - 1]);
 				};
 				break;
 			default:
@@ -413,88 +437,77 @@ function initialize () {
 				};
 				break;
 		};
-		if (prefix == "bas") {
-
-		} else {
-
-		};
-
 	};
 	update();
 	selectField("sheet_AS");
 };
 
-function selectOption (stem, index) {
-	var optionArray = window[stem + "Array"];
-	var selectedOption = optionArray[index];
+function selectOption (system, selection) {
+	var systemObject = masterOptions[system];
+	var selectedOption = systemObject[selection];
 	var equip = function (option) {
 		option.equipped = true;
-		for (k in option) {
-			if (equipped[k]) {
-				equipped[k] += option[k];
-				if (equipped[k] == 0) {
-					delete equipped[k];
+		for (stat in option.stats) {
+			if (equipped[stat]) {
+				equipped[stat] += option.stats[stat];
+				if (equipped[stat] == 0) {
+					delete equipped[stat];
 				};
 			} else {
-				switch (k) {
-					case "name":
-					case "equipped":
-					case "dmg":
-					case "efficiency":
-					case "grade":
-					case "rank":
-						break;
-					default:
-						equipped[k] = option[k];
-						break;
-				};
+				equipped[stat] = option.stats[stat];
 			};
 		};
+// SLOW: Auto-equip single-path prereqs
+//		if (option.rank) {
+//			var urOption = omegaSeeds[option.key.slice(0, option.key.indexOf("_"))];
+//			if (urOption.prereq && urOption.prereq.length == 1 && ! (omegaSeeds[urOption.prereq[0]].equipped)) {
+//				var prereq = urOption.prereq[0] + "_1";
+//				selectOption("Omega_Points", prereq);
+//			};
+//		};
 	};
 	var unequip = function (option) {
 		delete option.equipped;
-		for (k in option) {
-			if (equipped[k]) {
-				equipped[k] -= option[k];
-				if (equipped[k] == 0) {
-					delete equipped[k];
+		for (stat in option.stats) {
+			if (equipped[stat]) {
+				equipped[stat] -= option.stats[stat];
+				if (equipped[stat] == 0) {
+					delete equipped[stat];
 				};
 			} else {
-				switch (k) {
-					case "name":
-					case "equipped":
-					case "dmg":
-					case "efficiency":
-					case "grade":
-					case "rank":
-						break;
-					default:
-						equipped[k] = option[k];
-						break;
-				};
+				equipped[stat] = option.stats[stat];
 			};
 		};
 	};
-	if (stem != "syn") {
-		for (var i = 0; i < optionArray.length; i++) {
-			if (i != index && optionArray[i].equipped && (!(optionArray[i].grade) || optionArray[i].grade == selectedOption.grade) && (!(optionArray[i].rank) || optionArray[i].name == selectedOption.name)) {
-				unequip(optionArray[i]);
+	if (system != "Synergies") {
+		for (option in systemObject) {
+			var checkOption = systemObject[option];
+			if (option != selection && checkOption.equipped && (!(checkOption.grade) || checkOption.grade == selectedOption.grade) && (!(checkOption.rank) || checkOption.name == selectedOption.name)) {
+				unequip(checkOption);
 			};
 		};
 	};
-	if (optionArray[index].equipped) {
-		unequip(optionArray[index]);
+	if (selectedOption.equipped) {
+		unequip(selectedOption);
+		if (system == "Omega_Points") {
+			var urOption = selection.slice(0, selection.indexOf("_"));
+			omegaSeeds[urOption].equipped = false;
+		};
 	} else {
-		if (stem == "syn") {
+		if (system == "Synergies") {
 			var synergies = 0;
-			for (var i = 0; i < optionArray.length; i++) {
-				if (optionArray[i].equipped) {
+			for (option in systemObject) {
+				if (systemObject[option].equipped) {
 					synergies++;
 				};
 			};
 		};
-		if (stem != "syn" || synergies < 10) {
-			equip(optionArray[index]);
+		if (system != "Synergies" || synergies < 10) {
+			equip(selectedOption);
+			if (system == "Omega_Points") {
+				var urOption = selection.slice(0, selection.indexOf("_"));
+				omegaSeeds[urOption].equipped = true;
+			};
 		};
 	};
 	update();
@@ -628,6 +641,8 @@ function validateText () {
 	update();
 };
 
+// TODO: add Omega division column
+
 function update () {
 // Conversion calculations
 	var total = attTotal(equipped);
@@ -732,58 +747,49 @@ function update () {
 		};
 	};
 // DPS option comparisons
-	var optionDPS = function (itemArray, output) {
+	var optionDPS = function (system) {
+		var systemObject = masterOptions[system];
+		var output = system.substr(0, 3).toLowerCase();
 		switch (output) {
 			case "cos":
 			case "ome":
 			case "syn":
 				var currentArray = [];
-				for (var i = 0; i < itemArray.length; i++) {
-					if (itemArray[i].equipped) {
-						currentArray.push(itemArray[i]);
+				for (option in systemObject) {
+					if (systemObject[option].equipped) {
+						currentArray.push(systemObject[option]);
 					};
 				};
 				break;
 			default:
-				for (var i = 0; i < itemArray.length; i++) {
-					if (itemArray[i].equipped) {
-						var currentOption = itemArray[i];
+				for (option in systemObject) {
+					if (systemObject[option].equipped) {
+						var currentOption = systemObject[option];
 					};
 				};
 				break;
 		};
-		for (var i = 0; i < itemArray.length; i++) {
-			var compareItem = {};
-			for (k in itemArray[i]) {
-				switch (k) {
-					case "dmg":
-					case "grade":
-					case "rank":
-					case "efficiency":
-					case "equipped":
-						break;
-					default:
-						compareItem[k] = itemArray[i][k];
-						break;
-				};
+		for (option in systemObject) {
+			var thisOption = systemObject[option];
+			var compareItem = {stats: {}};
+			for (stat in thisOption.stats) {
+				compareItem.stats[stat] = thisOption.stats[stat];
+			};
+			if (thisOption.cost) {
+				compareItem.cost = thisOption.cost();
 			};
 			var opportunityCost = function (item) {
-				for (k in item) {
-					switch (k) {
-						case "name":
-						case "dmg":
-						case "grade":
-						case "rank":
-						case "efficiency":
-						case "equipped":
-							break;
-						default:
-							if (compareItem[k]) {
-								compareItem[k] -= item[k];
-							} else {
-								compareItem[k] = -item[k];
-							};
-							break;
+				if (item.cost) {
+					compareItem.cost -= item.cost();
+if (compareItem.name == "Arcane Attunement") {
+alert("yes");
+};
+				};
+				for (stat in item.stats) {
+					if (compareItem.stats[stat]) {
+						compareItem.stats[stat] -= item.stats[stat];
+					} else {
+						compareItem.stats[stat] = -item.stats[stat];
 					};
 				};
 			};
@@ -791,18 +797,18 @@ function update () {
 				switch (output) {
 					case "cos":
 						for (var j = 0; j < currentArray.length; j++) {
-							if (currentArray[j].grade == itemArray[i].grade) {
+							if (currentArray[j].grade == thisOption.grade) {
 								opportunityCost(currentArray[j]);
 							};
 						};
 						break;
 					case "ome":
 					case "syn":
-						if (itemArray[i].equipped) {
-							var compareItem = {};
+						if (thisOption.equipped) {
+							var compareItem = {stats: {}, cost: 0};
 						};
 						for (var j = 0; j < currentArray.length; j++) {
-							if (currentArray[j].name == itemArray[i].name) {
+							if (currentArray[j].name == thisOption.name) {
 								opportunityCost(currentArray[j]);
 							};
 						};
@@ -813,31 +819,31 @@ function update () {
 				};
 			};
 			var itemIndex = 0;
-			var item = attTotal(compareItem);
+			var item = attTotal(compareItem.stats);
 			var worn = attTotal(equipped);
-			item.HP = ((compareItem.HP) ? compareItem.HP : 0) + item.DUR * 180;
-			item.SP = ((compareItem.SP) ? compareItem.SP : 0) + item.INT * 2;
-			item.DF = (compareItem.DF) ? compareItem.DF : 0;
-			item.TN = ((compareItem.TN) ? compareItem.TN : 0) + item.SPE * 15;
+			item.HP = ((compareItem.stats.HP) ? compareItem.stats.HP : 0) + item.DUR * 180;
+			item.SP = ((compareItem.stats.SP) ? compareItem.stats.SP : 0) + item.INT * 2;
+			item.DF = (compareItem.stats.DF) ? compareItem.stats.DF : 0;
+			item.TN = ((compareItem.stats.TN) ? compareItem.stats.TN : 0) + item.SPE * 15;
 			var itemcnvDR = tagThing.HP * item.HP + tagThing.SP * item.SP + tagThing.DF * item.DF;
-			item.BR = stats.BR.total + ((compareItem.BR) ? compareItem.BR : 0) + item.FIG * 60;
-			item.BR = item.BR * 0.75 / (item.BR + 3601) + ((equipped.BC) ? equipped.BC : 0) + ((compareItem.BC) ? compareItem.BC : 0);
-			item.CD = ((compareItem.CD) ? compareItem.CD : 0) + item.INT * 90;
-			item.BD = item.CD + ((compareItem.BD) ? compareItem.BD : 0) + item.FIG * 180;
-			item.CD = stats.CD.actual + item.CD / 8000 + ((compareItem.CM) ? compareItem.CM : 0);
+			item.BR = stats.BR.total + ((compareItem.stats.BR) ? compareItem.stats.BR : 0) + item.FIG * 60;
+			item.BR = item.BR * 0.75 / (item.BR + 3601) + ((equipped.BC) ? equipped.BC : 0) + ((compareItem.stats.BC) ? compareItem.stats.BC : 0);
+			item.CD = ((compareItem.stats.CD) ? compareItem.stats.CD : 0) + item.INT * 90;
+			item.BD = item.CD + ((compareItem.stats.BD) ? compareItem.stats.BD : 0) + item.FIG * 180;
+			item.CD = stats.CD.actual + item.CD / 8000 + ((compareItem.stats.CM) ? compareItem.stats.CM : 0);
 			item.BD = stats.BD.actual + item.BD / 8000;
 			for (k in stats.CR.subtype) {
 				if (stats.CR.subtype[k].damagetype) {
-					item.CR = newCR[k] + ((compareItem.CR) ? compareItem.CR : 0) + item.INT * 30 + tagThing.TN * item.TN;
-					item.CR += (compareItem["CR" + k]) ? compareItem["CR" + k] : 0;
+					item.CR = newCR[k] + ((compareItem.stats.CR) ? compareItem.stats.CR : 0) + item.INT * 30 + tagThing.TN * item.TN;
+					item.CR += (compareItem.stats["CR" + k]) ? compareItem.stats["CR" + k] : 0;
 					for (tag in stats.CR.subtype) {
 						if (!(stats.CR.subtype[tag].damagetype)) {
-							item.CR += (compareItem["CR" + tag]) ? tagThing[tag] * compareItem["CR" + tag] : 0;
+							item.CR += (compareItem.stats["CR" + tag]) ? tagThing[tag] * compareItem.stats["CR" + tag] : 0;
 						};
 					};
-					item.CR = item.CR * 0.99 / (item.CR + 3601) + ((compareItem.CC) ? compareItem.CC : 0) + ((compareItem["CC" + k]) ? compareItem["CC" + k] : 0) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC" + k]) ? equipped["CC" + k] : 0);
-					item.DB = (((compareItem.DR) ? compareItem.DR : 0) + itemcnvDR) / 4000 + ((compareItem.DB) ? compareItem.DB : 0) + item.FIG * 0.03;
-					item.DB += ((compareItem["DR" + k]) ? compareItem["DR" + k] / 4000 : 0) + ((compareItem["DB" + k]) ? compareItem["DB" + k] : 0);
+					item.CR = item.CR * 0.99 / (item.CR + 3601) + ((compareItem.stats.CC) ? compareItem.stats.CC : 0) + ((compareItem.stats["CC" + k]) ? compareItem.stats["CC" + k] : 0) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC" + k]) ? equipped["CC" + k] : 0);
+					item.DB = (((compareItem.stats.DR) ? compareItem.stats.DR : 0) + itemcnvDR) / 4000 + ((compareItem.stats.DB) ? compareItem.stats.DB : 0) + item.FIG * 0.03;
+					item.DB += ((compareItem.stats["DR" + k]) ? compareItem.stats["DR" + k] / 4000 : 0) + ((compareItem.stats["DB" + k]) ? compareItem.stats["DB" + k] : 0);
 					switch (k) {
 						case "physical":
 							item.DB += item.STR * 0.04;
@@ -849,29 +855,29 @@ function update () {
 					};
 					for (tag in stats.DR.subtype) {
 						if (!(stats.DR.subtype[tag].damagetype)) {
-							item.DB += ((compareItem["DR" + tag]) ? tagThing[tag] * compareItem["DR" + tag] / 4000 : 0) + ((compareItem["DB" + tag]) ? tagThing[tag] * compareItem["DB" + tag] : 0);
+							item.DB += ((compareItem.stats["DR" + tag]) ? tagThing[tag] * compareItem.stats["DR" + tag] / 4000 : 0) + ((compareItem.stats["DB" + tag]) ? tagThing[tag] * compareItem.stats["DB" + tag] : 0);
 							if (tag == "movement") {
 								item.DB += tagThing[tag] * item.SPE * 0.02;
 							};
 						};
 					};
 					if (tagThing.physical * tagThing.energy > 0 || tagThing.physical * tagThing.mental > 0 || tagThing.energy * tagThing.mental > 0) {
-						item.DB += (compareItem.DRcosmic) ? compareItem.DRcosmic / 4000 : 0;
+						item.DB += (compareItem.stats.DRcosmic) ? compareItem.stats.DRcosmic / 4000 : 0;
 					};
 					item.DB += ezDB[k];
 					itemIndex += tagThing[k] * calcIndex(item.DB, item.CR, item.CD, item.BR, item.BD);
 				};
 			};
-			itemArray[i].dmg = ((output == "ome" || output == "syn") && itemArray[i].equipped) ? (ezIndex - itemIndex) / itemIndex : (itemIndex - ezIndex) / ezIndex;
-// TODO: Add prereq tree to Omegas and subtract prereqs that are already taken
+			thisOption.dmg = ((output == "ome" || output == "syn") && thisOption.equipped) ? (ezIndex - itemIndex) / itemIndex : (itemIndex - ezIndex) / ezIndex;
 			if (output == "ome") {
-				itemArray[i].efficiency = (compareItem.cost > 0 || itemArray[i].equipped) ? 4000 * itemArray[i].dmg / ((itemArray[i].equipped) ? itemArray[i].cost : compareItem.cost) : 0;
-				itemArray[i].newcost = (compareItem.cost == 0) ? -itemArray[i].cost : compareItem.cost;
+				thisOption.efficiency = (compareItem.cost > 0 || thisOption.equipped) ? 4000 * thisOption.dmg / ((thisOption.equipped) ? thisOption.cost() : compareItem.cost) : 0;
+				thisOption.newcost = (compareItem.cost == 0 && thisOption.equipped) ? -thisOption.cost() : compareItem.cost;
 			};
 		};
-		var displayArray = itemArray.slice(0);
-		for (var i = 0; i < displayArray.length; i++) {
-			displayArray[i].index = i;
+		var displayArray = [];
+		for (option in systemObject) {
+			displayArray.push(systemObject[option]);
+			displayArray[displayArray.length - 1].key = option;
 		};
 		if (output == "ome") {
 			displayArray.sort(function (a, b) {
@@ -902,40 +908,30 @@ function update () {
 				};
 			});
 		};
+		if (output == "ome") {
+			var omegaTotal = 0;
+		};
 		for (var i = 0; i < displayArray.length; i++) {
 			var optionName = document.getElementById(output + "Name" + i);
 			var optionStats = document.getElementById(output + "Stats" + i);
 			var optionRow = optionName.parentNode;
-			optionRow.id = output + displayArray[i].index;
+			optionRow.id = output + displayArray[i].key;
 			if (output != "att") {
 				optionRow.onclick = function () {
-					var index = this.id.slice(3);
-					selectOption(output, index);
+					var selection = this.id.slice(3);
+					selectOption(system, selection);
 				};
 			};
 			optionName.innerHTML = displayArray[i].name + ((displayArray[i].grade) ? " (Grade " + displayArray[i].grade + ")" : "") + ((displayArray[i].rank) ? " (Rank " + displayArray[i].rank + ")" : "");
 			optionName.style.backgroundColor = "initial";
 			optionName.style.color = "initial";
 			optionStats.innerHTML = "";
-			for (k in displayArray[i]) {
-				switch (k) {
-					case "name":
-					case "dmg":
-					case "cost":
-					case "newcost":
-					case "grade":
-					case "rank":
-					case "efficiency":
-					case "index":
-						break;
-					case "equipped":
-						optionName.style.backgroundColor = "2080F0";
-						optionName.style.color = "FFFFFF";
-						break;
-					default:
-						optionStats.innerHTML += "&nbsp;" + k + ": " + displayArray[i][k] + "<br>";
-						break;
-				};
+			for (stat in displayArray[i].stats) {
+				optionStats.innerHTML += "&nbsp;" + stat + ": " + displayArray[i].stats[stat] + "<br>";
+			};
+			if (displayArray[i].equipped) {
+				optionName.style.backgroundColor = "2080F0";
+				optionName.style.color = "FFFFFF";
 			};
 			if ((output == "ome" || output == "syn") && displayArray[i].equipped) {
 				var dmgDisplay = "(" + ((displayArray[i].dmg > 0) ? "+ " : "") + fixedToPercent(displayArray[i].dmg) + ")&nbsp;"
@@ -944,13 +940,19 @@ function update () {
 			};
 			document.getElementById(output + "DPS" + i).innerHTML = dmgDisplay;
 			if (output == "ome") {
+				if (displayArray[i].equipped) {
+					omegaTotal -= displayArray[i].newcost;
+				};
 				document.getElementById(output + "Efficiency" + i).innerHTML = fixedToPercent(displayArray[i].efficiency) + "&nbsp;";
 				document.getElementById(output + "Cost" + i).innerHTML = ((displayArray[i].equipped) ? "(" + -displayArray[i].newcost + ")" : displayArray[i].newcost) + "&nbsp;";
 			};
 		};
+		if (output == "ome") {
+			document.getElementById("omegaTotal").innerHTML = ((omegaTotal > 7500) ? "<a style = 'color: red'>" : "") + omegaTotal + ((omegaTotal > 7500) ? "</a>" : "") + "/7500 &Omega;";
+		};
 	};
-	for (var i = 0; i < masterOptionArray.length; i++) {
-		optionDPS(masterOptionArray[i].array, masterOptionArray[i].name.substr(0, 3).toLowerCase());
+	for (system in masterOptions) {
+		optionDPS(system);
 	};
 // Stat weighting
 	var compositeDR = tagThing.physical * ezDB.physical + tagThing.energy * ezDB.energy + tagThing.mental * ezDB.mental;
@@ -1219,27 +1221,32 @@ function saveState () {
 		};
 	};
 	var equipcode = {};
-	for (var i = 0; i < masterOptionArray.length; i++) {
-		var stem = masterOptionArray[i].name.substr(0, 3).toLowerCase();
+	for (system in masterOptions) {
+		var systemObject = masterOptions[system];
+		var stem = system.substr(0, 3).toLowerCase();
 		switch (stem) {
 			case "ble":
 			case "leg":
 			case "med":
 			case "rel":
 				equipcode[stem] = 0;
-				for (var j = 0; j < masterOptionArray[i].array.length; j++) {
-					if (masterOptionArray[i].array[j].equipped) {
-						equipcode[stem] = j + 1;
+				var optionIndex = 0;
+				for (option in systemObject) {
+					if (systemObject[option].equipped) {
+						equipcode[stem] = optionIndex + 1;
 					};
+					optionIndex++;
 				};
 				break;
 			case "cos":
 			case "syn":
 				equipcode[stem] = [];
-				for (var j = 0; j < masterOptionArray[i].array.length; j++) {
-					if (masterOptionArray[i].array[j].equipped) {
-						equipcode[stem].push(j + 1);
+				var optionIndex = 0;
+				for (option in systemObject) {
+					if (systemObject[option].equipped) {
+						equipcode[stem].push(optionIndex  + 1);
 					};
+					optionIndex++;
 				};
 				break;
 			case "ome":
