@@ -18,6 +18,7 @@ td {width: 100px; font-family: Arial; font-size: small; vertical-align: top;}
 .blename {width: 150px;}
 .synname {width: 150px;}
 .omename {width: 290px;}
+.omedivision {width: 160px;}
 .cosname {width: 200px;}
 .attname {width: 100px;}
 .optiondelta {outline: #BB0000 solid 1px; text-align: right;}
@@ -243,6 +244,16 @@ function initialize () {
 					innerCell.id = stem + "Cost" + optionIndex;
 					innerCell.className = "optioncost";
 					newCell.appendChild(innerTable);
+					newCell = newRow.insertCell(0);
+					newCell.className = "omedivision";
+					var innerTable = document.createElement("TABLE");
+					innerTable.cellSpacing = 0;
+					innerTable.cellPadding = 0;
+					var innerRow = innerTable.insertRow(0);
+					var innerCell = innerRow.insertCell(0);
+					innerCell.id = stem + "Division" + optionIndex;
+					innerCell.className = "omedivision";
+					newCell.appendChild(innerTable);
 				};
 				optionIndex++;
 			};
@@ -281,6 +292,9 @@ function initialize () {
 			newCell.className = "heading center";
 			newCell.id = "omegaTotal";
 			newCell.innerHTML = "0/7500 &Omega;";
+			newCell = newRow.insertCell(0);
+			newCell.className = "heading";
+			newCell.innerHTML = "Division";
 		};
 	};
 	var systemIndex = 0;
@@ -641,8 +655,6 @@ function validateText () {
 	update();
 };
 
-// TODO: add Omega division column
-
 function update () {
 // Conversion calculations
 	var total = attTotal(equipped);
@@ -667,25 +679,37 @@ function update () {
 				break;
 			case "CR":
 				currentStat.total = ((currentStat.linked) ? stats[prefix].total : total.INT * 30 + cnvCR) + currentStat.value + ((equipStat) ? equipStat : 0);
+				if (!(currentStat.linked) && tagThing.melee > 0 && equipped.CR_if_melee) {
+					currentStat.total += equipped.CR_if_melee;
+				};
 				currentStat.actual = currentStat.total * 0.99 / (currentStat.total + 3601) + ((equipped.CC) ? equipped.CC : 0);
 				currentStat.actual += ((subtype && equipped["CC" + subtype]) ? equipped["CC" + subtype] : 0);
 				break;
 			case "BR":
 				currentStat.total = ((currentStat.linked) ? stats[prefix].total : total.FIG * 60) + currentStat.value + ((equipStat) ? equipStat : 0);
+				if (!(currentStat.linked) && tagThing.melee > 0 && equipped.BR_if_melee) {
+					currentStat.total += equipped.BR_if_melee;
+				};
 				currentStat.actual = currentStat.total * 0.75 / (currentStat.total + 3601) + ((equipped.BC) ? equipped.BC : 0);
 				break;
 			case "CD":
 				currentStat.total = currentStat.value + total.INT * 90 + ((equipStat) ? equipStat : 0);
+				if (tagThing.melee > 0 && equipped.CD_if_melee) {
+					currentStat.total += equipped.CD_if_melee;
+				};
 				currentStat.actual = currentStat.total / 8000 + 1.5 + ((equipped.CM) ? equipped.CM : 0);
 				break;
 			case "BD":
 				currentStat.total = stats.CD.total + currentStat.value + total.FIG * 180 + ((equipStat) ? equipStat : 0);
-				currentStat.actual = currentStat.total / 8000 + 3;
+				currentStat.actual = currentStat.total / 8000 + 3 + ((equipped.BM) ? equipped.BM : 0);
 				break;
 			case "DR":
 				currentStat.total = ((currentStat.linked) ? stats[prefix].total : 0) + currentStat.value + ((subtype) ? 0 : cnvDR) + ((equipStat) ? equipStat : 0);
 				if ((tagThing.physical * tagThing.energy > 0 || tagThing.physical * tagThing.mental > 0 || tagThing.energy * tagThing.mental > 0) && currentStat.linked && equipped.DRcosmic > 0) {
 					currentStat.total += equipped.DRcosmic;
+				};
+				if (subtype && tagThing.ranged > 0 && equipped["DR" + subtype + "_if_ranged"]) {
+					currentStat.total += equipped["DR" + subtype + "_if_ranged"];
 				};
 				currentStat.actual = currentStat.total / 4000;
 				break;
@@ -695,10 +719,30 @@ function update () {
 					switch (subtype) {
 						case "physical":
 							currentStat.total += total.STR * 0.04;
+							if (tagThing.energy > 0 && equipped.DBphysical_if_energy) {
+								currentStat.total += equipped.DBphysical_if_energy;
+							};
+							if (tagThing.mental > 0 && equipped.DBphysical_if_mental) {
+								currentStat.total += equipped.DBphysical_if_mental;
+							};
+							if (tagThing.movement > 0 && equipped.DBphysical_if_movement) {
+								currentStat.total += equipped.DBphysical_if_movement;
+							};
 							break;
 						case "energy":
+							currentStat.total += total.ENE * 0.04;
+							if (tagThing.physical > 0 && equipped.DBenergy_if_physical) {
+								currentStat.total += equipped.DBenergy_if_physical;
+							};
+							break;
 						case "mental":
 							currentStat.total += total.ENE * 0.04;
+							if (tagThing.physical > 0 && equipped.DBmental_if_physical) {
+								currentStat.total += equipped.DBmental_if_physical;
+							};
+							if (tagThing.movement > 0 && equipped.DBmental_if_movement) {
+								currentStat.total += equipped.DBmental_if_movement;
+							};
 							break;
 						case "movement":
 							currentStat.total += total.SPE * 0.02;
@@ -827,15 +871,24 @@ alert("yes");
 			item.TN = ((compareItem.stats.TN) ? compareItem.stats.TN : 0) + item.SPE * 15;
 			var itemcnvDR = tagThing.HP * item.HP + tagThing.SP * item.SP + tagThing.DF * item.DF;
 			item.BR = stats.BR.total + ((compareItem.stats.BR) ? compareItem.stats.BR : 0) + item.FIG * 60;
+			if (tagThing.melee > 0 && compareItem.stats.BR_if_melee) {
+				item.BR += compareItem.stats.BR_if_melee;
+			};
 			item.BR = item.BR * 0.75 / (item.BR + 3601) + ((equipped.BC) ? equipped.BC : 0) + ((compareItem.stats.BC) ? compareItem.stats.BC : 0);
 			item.CD = ((compareItem.stats.CD) ? compareItem.stats.CD : 0) + item.INT * 90;
+			if (tagThing.melee > 0 && compareItem.stats.CD_if_melee) {
+				item.CD += compareItem.stats.CD_if_melee;
+			};
 			item.BD = item.CD + ((compareItem.stats.BD) ? compareItem.stats.BD : 0) + item.FIG * 180;
 			item.CD = stats.CD.actual + item.CD / 8000 + ((compareItem.stats.CM) ? compareItem.stats.CM : 0);
-			item.BD = stats.BD.actual + item.BD / 8000;
+			item.BD = stats.BD.actual + item.BD / 8000 + ((compareItem.stats.BM) ? compareItem.stats.BM : 0);
 			for (k in stats.CR.subtype) {
 				if (stats.CR.subtype[k].damagetype) {
 					item.CR = newCR[k] + ((compareItem.stats.CR) ? compareItem.stats.CR : 0) + item.INT * 30 + tagThing.TN * item.TN;
 					item.CR += (compareItem.stats["CR" + k]) ? compareItem.stats["CR" + k] : 0;
+					if (tagThing.melee > 0 && compareItem.stats.CR_if_melee) {
+						item.CR += compareItem.stats.CR_if_melee;
+					};
 					for (tag in stats.CR.subtype) {
 						if (!(stats.CR.subtype[tag].damagetype)) {
 							item.CR += (compareItem.stats["CR" + tag]) ? tagThing[tag] * compareItem.stats["CR" + tag] : 0;
@@ -847,10 +900,30 @@ alert("yes");
 					switch (k) {
 						case "physical":
 							item.DB += item.STR * 0.04;
+							if (tagThing.energy > 0 && compareItem.stats.DBphysical_if_energy) {
+								item.DB += compareItem.stats.DBphysical_if_energy;
+							};
+							if (tagThing.mental > 0 && compareItem.stats.DBphysical_if_mental) {
+								item.DB += compareItem.stats.DBphysical_if_mental;
+							};
+							if (tagThing.movement > 0 && compareItem.stats.DBphysical_if_movement) {
+								item.DB += compareItem.stats.DBphysical_if_movement;
+							};
 							break;
 						case "energy":
+							item.DB += item.ENE * 0.04;
+							if (tagThing.physical > 0 && compareItem.stats.DBenergy_if_physical) {
+								item.DB += compareItem.stats.DBenergy_if_physical;
+							};
+							break;
 						case "mental":
 							item.DB += item.ENE * 0.04;
+							if (tagThing.physical > 0 && compareItem.stats.DBmental_if_physical) {
+								item.DB += compareItem.stats.DBmental_if_physical;
+							};
+							if (tagThing.movement > 0 && compareItem.stats.DBmental_if_movement) {
+								item.DB += compareItem.stats.DBmental_if_movement;
+							};
 							break;
 					};
 					for (tag in stats.DR.subtype) {
@@ -863,6 +936,9 @@ alert("yes");
 					};
 					if (tagThing.physical * tagThing.energy > 0 || tagThing.physical * tagThing.mental > 0 || tagThing.energy * tagThing.mental > 0) {
 						item.DB += (compareItem.stats.DRcosmic) ? compareItem.stats.DRcosmic / 4000 : 0;
+					};
+					if (tagThing.ranged > 0 && compareItem.stats["DR" + k + "_if_ranged"]) {
+						item.DB += compareItem.stats["DR" + k + "_if_ranged"] / 4000;
 					};
 					item.DB += ezDB[k];
 					itemIndex += tagThing[k] * calcIndex(item.DB, item.CR, item.CD, item.BR, item.BD);
@@ -943,6 +1019,22 @@ alert("yes");
 				if (displayArray[i].equipped) {
 					omegaTotal -= displayArray[i].newcost;
 				};
+				var divisionName = function (key) {
+					var abbr = key.slice(0, 2);
+					var divisions = {
+							AA: "Arcane Attunement",
+							HA: "Human Augmentation",
+							MA: "Molecular Adjustment",
+							MU: "Mutation",
+							NE: "Neural Enhancement",
+							NT: "Nanotechnology",
+							PS: "Psionics",
+							RO: "Radioactive Origins",
+							SW: "Special Weapons Support",
+					};
+					return divisions[abbr];
+				};
+				document.getElementById(output + "Division" + i).innerHTML = divisionName(displayArray[i].key);
 				document.getElementById(output + "Efficiency" + i).innerHTML = fixedToPercent(displayArray[i].efficiency) + "&nbsp;";
 				document.getElementById(output + "Cost" + i).innerHTML = ((displayArray[i].equipped) ? "(" + -displayArray[i].newcost + ")" : displayArray[i].newcost) + "&nbsp;";
 			};

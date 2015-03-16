@@ -182,7 +182,7 @@ var objSynergies = {
 		thor: {name: "Thor", stats: {DBphysical: 0.03, DBenergy: 0.03}},
 		venom: {name: "Venom", stats: {HP: 210, DBhalf: 0.05}},
 		ws: {name: "Winter Soldier", stats: {DBranged: 0.03, DBmelee: 0.03}},
-		wolvie: {name: "Wolverine", stats: {BC: 0.02, BD: 400}},
+		wolvie: {name: "Wolverine", stats: {BC: 0.02, BM: 0.05}},
 		x23: {name: "X-23", stats: {DBbleed: 0.04}}
 };
 
@@ -251,36 +251,32 @@ var omegaSeeds = {
 		stats: {CRenergy: 6, DRenergy: 6, BRenergy: 6},
 		prereq: ["AAarcaneattunement"]
 	},
-// Iron Fist missing proc logic
 	AAironfist: {
 		name: "Iron Fist",
 		ranks: 20,
 		cost: {base: 30, increment: 2},
-		stats: {DBmental: 0.01},
+		stats: {DBmental_if_physical: 0.01},
 		prereq: ["AAarcaneattunement"]
 	},
-// Mjolnir missing proc logic
 	AAmjolnir: {
 		name: "Mjolnir",
 		ranks: 20,
 		cost: {base: 30, increment: 2},
-		stats: {DBenergy: 0.01},
+		stats: {DBenergy_if_physical: 0.01},
 		prereq: ["AAarcaneattunement"]
 	},
-// Prince of Orphans missing proc logic
 	AAprinceoforphans: {
 		name: "Prince of Orphans",
 		ranks: 20,
 		cost: {base: 30, increment: 2},
-		stats: {DBphysical: 0.01},
+		stats: {DBphysical_if_mental: 0.01},
 		prereq: ["AAironfist"]
 	},
-// Stormbreaker missing proc logic
 	AAstormbreaker: {
 		name: "Stormbreaker",
 		ranks: 20,
 		cost: {base: 30, increment: 2},
-		stats: {DBphysical: 0.01},
+		stats: {DBphysical_if_energy: 0.01},
 		prereq: ["AAmjolnir"]
 	},
 	AAzarathos: {
@@ -377,7 +373,7 @@ var omegaSeeds = {
 		name: "Pym's Hybrid Particles",
 		ranks: 20,
 		cost: {base: 60, increment: 2},
-		stats: {DBmelee: 0.01}
+		stats: {DBmelee: 0.01, DF: 60}
 	},
 	MApymsshrinkingparticles: {
 		name: "Pym's Shrinking Particles",
@@ -427,19 +423,17 @@ var omegaSeeds = {
 		stats: {DBmental: 0.01},
 		prereq: ["MUangel", "MUpsylocke"]
 	},
-// Frenzy missing melee proc logic
 	MUfrenzy: {
 		name: "Frenzy",
 		ranks: 10,
 		cost: {base: 20, increment: 2},
-		stats: {CD: 60}
+		stats: {CD_if_melee: 60}
 	},
-// Psylocke missing movement proc logic
 	MUpsylocke: {
 		name: "Psylocke",
 		ranks: 10,
 		cost: {base: 35, increment: 5},
-		stats: {DBmental: 0.01, DBphysical: 0.01}
+		stats: {DBmental_if_movement: 0.01, DBphysical_if_movement: 0.01}
 	},
 	MUsabretooth: {
 		name: "Sabretooth",
@@ -777,20 +771,44 @@ var omegaSeeds = {
 		stats: {DBsummon: 0.01, CRsummon: 0.01, BRsummon: 0.01},
 		prereq: ["PSmergeandpossess"]
 	},
-// Harpy missing melee proc logic
 	ROharpy: {
 		name: "Harpy",
 		ranks: 5,
 		cost: {base: 20, increment: 2},
-		stats: {CR: 12, BR: 12}
+		stats: {CR_if_melee: 12, BR_if_melee: 12}
 	},
-// Lyra missing melee proc logic
 	ROlyra: {
 		name: "Lyra",
 		ranks: 5,
 		cost: {base: 40, increment: 10},
-		stats: {CR: 30, CD: 30},
+		stats: {CR_if_melee: 30, CD_if_melee: 30},
 		prereq: ["ROharpy"]
+	},
+	SWassaultrifles: {
+		name: "Assault Rifles",
+		ranks: 20,
+		cost: {base: 40, increment: 5},
+		stats: {DBranged: 0.01}
+	},
+	SWfocusedplasmacannon: {
+		name: "Focused Plasma Cannon",
+		ranks: 20,
+		cost: {base: 30, increment: 2},
+		stats: {DRphysical_if_ranged: 7.2, DRenergy_if_ranged: 7.2}
+	},
+	SWnightnightpistol: {
+		name: "Night Night Pistol",
+		ranks: 20,
+		cost: {base: 60, increment: 5},
+		stats: {DBranged: 0.01, proc: 1},
+		prereq: ["SWfocusedplasmacannon"]
+	},
+	SWsilencers: {
+		name: "Silencers",
+		ranks: 20,
+		cost: {base: 30, increment: 2},
+		stats: {DBunaware: 0.01},
+		prereq: ["SWassaultrifles"]
 	},
 };
 
