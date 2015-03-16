@@ -794,7 +794,7 @@ var omegaSeeds = {
 		name: "Focused Plasma Cannon",
 		ranks: 20,
 		cost: {base: 30, increment: 2},
-		stats: {DRphysical_if_ranged: 7.2, DRenergy_if_ranged: 7.2}
+		stats: {DRphysical_if_ranged: 36, DRenergy_if_ranged: 36}
 	},
 	SWnightnightpistol: {
 		name: "Night Night Pistol",
