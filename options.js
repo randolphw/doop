@@ -352,6 +352,13 @@ var omegaSeeds = {
 		stats: {DBbasic: 0.01, ATintelligence: 1, DBsummon: 0.01},
 		prereq: ["MAterrigencrystals"]
 	},
+	MAantigenesis: {
+		name: "Antigenesis",
+		ranks: 10,
+		cost: {base: 250, increment: 5},
+		stats: {DFmental: 6, deflect: 0.001, ATenergy: 1},
+		prereq: ["MAterrigencrystals"]
+	},
 	MAexogenesis: {
 		name: "Exogenesis",
 		ranks: 10,
