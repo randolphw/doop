@@ -679,8 +679,13 @@ function update () {
 				break;
 			case "CR":
 				currentStat.total = ((currentStat.linked) ? stats[prefix].total : total.INT * 30 + cnvCR) + currentStat.value + ((equipStat) ? equipStat : 0);
-				if (!(currentStat.linked) && tagThing.melee > 0 && equipped.CR_if_melee) {
-					currentStat.total += equipped.CR_if_melee;
+				if (!(currentStat.linked)) {
+					if (tagThing.melee > 0 && equipped.CR_if_melee) {
+						currentStat.total += equipped.CR_if_melee;
+					};
+					if (tagThing.ranged > 0 && equipped.CR_if_ranged) {
+						currentStat.total += equipped.CR_if_ranged;
+					};
 				};
 				currentStat.actual = currentStat.total * 0.99 / (currentStat.total + 3601) + ((equipped.CC) ? equipped.CC : 0);
 				currentStat.actual += ((subtype && equipped["CC" + subtype]) ? equipped["CC" + subtype] : 0);
@@ -696,6 +701,9 @@ function update () {
 				currentStat.total = currentStat.value + total.INT * 90 + ((equipStat) ? equipStat : 0);
 				if (tagThing.melee > 0 && equipped.CD_if_melee) {
 					currentStat.total += equipped.CD_if_melee;
+				};
+				if (tagThing.ranged > 0 && equipped.CD_if_ranged) {
+					currentStat.total += equipped.CD_if_ranged;
 				};
 				currentStat.actual = currentStat.total / 8000 + 1.5 + ((equipped.CM) ? equipped.CM : 0);
 				break;
@@ -879,6 +887,9 @@ alert("yes");
 			if (tagThing.melee > 0 && compareItem.stats.CD_if_melee) {
 				item.CD += compareItem.stats.CD_if_melee;
 			};
+			if (tagThing.ranged > 0 && compareItem.stats.CD_if_ranged) {
+				item.CD += compareItem.stats.CD_if_ranged;
+			};
 			item.BD = item.CD + ((compareItem.stats.BD) ? compareItem.stats.BD : 0) + item.FIG * 180;
 			item.CD = stats.CD.actual + item.CD / 8000 + ((compareItem.stats.CM) ? compareItem.stats.CM : 0);
 			item.BD = stats.BD.actual + item.BD / 8000 + ((compareItem.stats.BM) ? compareItem.stats.BM : 0);
@@ -888,6 +899,9 @@ alert("yes");
 					item.CR += (compareItem.stats["CR" + k]) ? compareItem.stats["CR" + k] : 0;
 					if (tagThing.melee > 0 && compareItem.stats.CR_if_melee) {
 						item.CR += compareItem.stats.CR_if_melee;
+					};
+					if (tagThing.ranged > 0 && compareItem.stats.CR_if_ranged) {
+						item.CR += compareItem.stats.CR_if_ranged;
 					};
 					for (tag in stats.CR.subtype) {
 						if (!(stats.CR.subtype[tag].damagetype)) {

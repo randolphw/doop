@@ -244,12 +244,28 @@ var omegaSeeds = {
 		cost: {base: 3, increment: 1, interval: 10},
 		stats: {SP: 1}
 	},
+// Bride of Nine Spiders missing group buff logic
+	AAbrideofninespiders: {
+		name: "Bride of Nine Spiders",
+		ranks: 5,
+		cost: {base: 150, increment: 10},
+		stats: {DBmental_if_physical: 0.01},
+		prereq: ["AAprinceoforphans"]
+	},
 	AAdoomsmysticarmor: {
 		name: "Doom's Mystic Armor",
 		ranks: 20,
 		cost: {base: 16, increment: 1},
 		stats: {CRenergy: 6, DRenergy: 6, BRenergy: 6},
 		prereq: ["AAarcaneattunement"]
+	},
+// Gungnir missing group buff logic
+	AAgungnir: {
+		name: "Gungnir",
+		ranks: 5,
+		cost: {base: 150, increment: 10},
+		stats: {DBenergy_if_physical: 0.01},
+		prereq: ["AAstormbreaker"]
 	},
 	AAironfist: {
 		name: "Iron Fist",
@@ -299,6 +315,12 @@ var omegaSeeds = {
 		stats: {CM: 0.02, DB: -0.01},
 		prereq: ["HAelixirofimmortality"]
 	},
+	HAdeathlokprogram: {
+		name: "Deathlok Program",
+		ranks: 30,
+		cost: {base: 12, increment: 1},
+		stats: {DRphysical: 12}
+	},
 	HAelixirofimmortality: {
 		name: "Elixir of Immortality",
 		ranks: 10,
@@ -306,18 +328,19 @@ var omegaSeeds = {
 		stats: {HP: 70},
 		prereq: ["HAadamantiumlacedskin"]
 	},
-	HAdeathlokprogram: {
-		name: "Deathlok Program",
-		ranks: 30,
-		cost: {base: 12, increment: 1},
-		stats: {DRphysical: 12}
-	},
 	HAextechopcyberneticbodyupgrades: {
 		name: "ExTechOp Cybernetic Body Upgrades",
 		ranks: 20,
 		cost: {base: 30, increment: 2},
 		stats: {DRphysical: 24},
 		prereq: ["HAdeathlokprogram"]
+	},
+	HAomegadeathspores: {
+		name: "Omega Death Spores",
+		ranks: 10,
+		cost: {base: 25, increment: 5},
+		stats: {proc: 1236},
+		prereq: ["HAadamantiumlacedskin"]
 	},
 // Goblin Formula missing proc logic, proc stats (too inconsistent)
 	HAgoblinformula: {
@@ -327,6 +350,14 @@ var omegaSeeds = {
 		stats: {ATfighting: 1},
 		prereq: ["HAextechopcyberneticbodyupgrades"]
 	},
+// Hyde Formula needs melee proc logic
+//	HAhydeformula: {
+//		name: "Hyde Formula",
+//		ranks: 20,
+//		cost: {base: 40, increment: 10},
+//		stats: {BC: 0.03, CC: -0.01},
+//		prereq: ["HAweaponx"]
+//	},
 	HAreaverprogram: {
 		name: "Reaver Program",
 		ranks: 10,
@@ -340,6 +371,14 @@ var omegaSeeds = {
 		cost: {base: 200, increment: 10},
 		stats: {ATstrength: 1},
 		prereq: ["HAreaverprogram"]
+	},
+// Weapon X should be BRmelee
+	HAweaponx: {
+		name: "Weapon X",
+		ranks: 20,
+		cost: {base: 2, increment: 0},
+		stats: {CRmelee: 1, BR: 1, DFphysical: 1},
+		prereq: ["HAomegadeathspores"]
 	},
 	MAamphogenesis: {
 		name: "Amphogenesis",
@@ -403,6 +442,7 @@ var omegaSeeds = {
 		stats: {BR: 30, SP: -2, BD: 60, DB: 0.02},
 		prereq: ["MAterrigencrystals"]
 	},
+// TODO: finish Mutation
 	MUangel: {
 		name: "Angel",
 		ranks: 5,
@@ -447,6 +487,68 @@ var omegaSeeds = {
 		cost: {base: 180, increment: 10},
 		stats: {ATfighting: 1},
 		prereq: ["MUangel"]
+	},
+// TODO: finish Neural Enhancement
+	NEamadeuscho: {
+		name: "Amadeus Cho",
+		ranks: 5,
+		cost: {base: 50, increment: 25},
+		stats: {BC: -0.05, ATintelligence: 1, CC: 0.01},
+		prereq: ["NEtacticalneuralimplant"]
+	},
+	NEassassinprogramming: {
+		name: "Assassin Programming",
+		ranks: 5,
+		cost: {base: 20, increment: 2},
+		stats: {proc: 3088},
+		prereq: ["NEcochlearimplant"]
+	},
+	NEcerebro: {
+		name: "Cerebro",
+		ranks: 20,
+		cost: {base: 20, increment: 2},
+		stats: {DF: -120, DRmental: 60},
+		prereq: ["NEtacticalneuralimplant"]
+	},
+	NEcochlearimplant: {
+		name: "Cochlear Implant",
+		ranks: 20,
+		cost: {base: 15, increment: 1},
+		stats: {deflect: 0.001, dodge: 6}
+	},
+// Combat Rorschach Training should be DBvuln
+	NEcombatrorschachtraining: {
+		name: "Combat Rorschach Training",
+		ranks: 10,
+		cost: {initial: 12, base: 38, increment: 2},
+		stats: {DB: 0.01},
+		prereq: ["NEassassinprogramming", "NEguiltsuppressionresearch"]
+	},
+	NEguiltsuppressionresearch: {
+		name: "Guilt Suppression Research",
+		ranks: 10,
+		cost: {base: 40, increment: 5},
+		stats: {BR: 60, SP: -1, SOD: 1},
+		prereq: ["NEcochlearimplant"]
+	},
+	NEneuralrecovery: {
+		name: "Neural Recovery",
+		ranks: 50,
+		cost: {base: 6, increment: 1},
+		stats: {SOM: 1}
+	},
+	NEneurobiotics: {
+		name: "Neurobiotics",
+		ranks: 10,
+		cost: {base: 25, increment: 1},
+		stats: {DRphysical: 24, DRmental: 24}
+	},
+	NEtacticalneuralimplant: {
+		name: "Tactical Neural Implant",
+		ranks: 10,
+		cost: {base: 40, increment: 5},
+		stats: {CD: 30, CRmelee: 30},
+		prereq: ["NEneuralrecovery"]
 	},
 // Extremis Durability might need logic to handle percentile DF increases (see Luke Cage)
 	NTextremisdurability: {
@@ -524,67 +626,6 @@ var omegaSeeds = {
 		ranks: 10,
 		cost: {base: 38, increment: 2},
 		stats: {DRboss: 60}
-	},
-	NEamadeuscho: {
-		name: "Amadeus Cho",
-		ranks: 5,
-		cost: {base: 50, increment: 25},
-		stats: {BC: -0.05, ATintelligence: 1, CC: 0.01},
-		prereq: ["NEtacticalneuralimplant"]
-	},
-	NEassassinprogramming: {
-		name: "Assassin Programming",
-		ranks: 5,
-		cost: {base: 20, increment: 2},
-		stats: {proc: 3088},
-		prereq: ["NEcochlearimplant"]
-	},
-	NEcerebro: {
-		name: "Cerebro",
-		ranks: 20,
-		cost: {base: 20, increment: 2},
-		stats: {DF: -120, DRmental: 60},
-		prereq: ["NEtacticalneuralimplant"]
-	},
-	NEcochlearimplant: {
-		name: "Cochlear Implant",
-		ranks: 20,
-		cost: {base: 15, increment: 1},
-		stats: {deflect: 0.001, dodge: 6}
-	},
-	NEguiltsuppressionresearch: {
-		name: "Guilt Suppression Research",
-		ranks: 10,
-		cost: {base: 40, increment: 5},
-		stats: {BR: 60, SP: -1, SOD: 1},
-		prereq: ["NEcochlearimplant"]
-	},
-	NEneuralrecovery: {
-		name: "Neural Recovery",
-		ranks: 50,
-		cost: {base: 6, increment: 1},
-		stats: {SOM: 1}
-	},
-	NEneurobiotics: {
-		name: "Neurobiotics",
-		ranks: 10,
-		cost: {base: 25, increment: 1},
-		stats: {DRphysical: 24, DRmental: 24}
-	},
-	NEtacticalneuralimplant: {
-		name: "Tactical Neural Implant",
-		ranks: 10,
-		cost: {base: 40, increment: 5},
-		stats: {CD: 30, CRmelee: 30},
-		prereq: ["NEneuralrecovery"]
-	},
-// Combat Rorschach Training should be DBvuln
-	NEcombatrorschachtraining: {
-		name: "Combat Rorschach Training",
-		ranks: 10,
-		cost: {initial: 12, base: 38, increment: 2},
-		stats: {DB: 0.01},
-		prereq: ["NEassassinprogramming", "NEguiltsuppressionresearch"]
 	},
 	PSclairsentience: {
 		name: "Clairsentience",
@@ -771,6 +812,7 @@ var omegaSeeds = {
 		stats: {DBsummon: 0.01, CRsummon: 0.01, BRsummon: 0.01},
 		prereq: ["PSmergeandpossess"]
 	},
+// TODO: finish Radioactive Origins
 	ROharpy: {
 		name: "Harpy",
 		ranks: 5,
@@ -784,6 +826,13 @@ var omegaSeeds = {
 		stats: {CR_if_melee: 30, CD_if_melee: 30},
 		prereq: ["ROharpy"]
 	},
+	SWadvancedmandroidarmor: {
+		name: "Advanced Mandroid Armor",
+		ranks: 20,
+		cost: {base: 45, increment: 1},
+		stats: {DF: 30, DBmelee: 0.01},
+		prereq: ["SWmandroidarmor"]
+	},
 	SWassaultrifles: {
 		name: "Assault Rifles",
 		ranks: 20,
@@ -796,6 +845,25 @@ var omegaSeeds = {
 		cost: {base: 30, increment: 2},
 		stats: {DRphysical_if_ranged: 36, DRenergy_if_ranged: 36}
 	},
+	SWhighcapacitymagazine: {
+		name: "High Capacity Magazine",
+		ranks: 20,
+		cost: {base: 45, increment: 5},
+		stats: {SOB: 1}
+	},
+	SWhulkbustermandroidmod: {
+		name: "Hulkbuster Mandroid Armor",
+		ranks: 10,
+		cost: {base: 200, increment: 25},
+		stats: {HP: 60, armorboss: 0.01, TN: 5, DBboss: 0.01},
+		prereq: ["SWmandroidarmor"]
+	},
+	SWmandroidarmor: {
+		name: "Mandroid Armor",
+		ranks: 20,
+		cost: {base: 100, increment: 20},
+		stats: {ATdurability: 1}
+	},
 	SWnightnightpistol: {
 		name: "Night Night Pistol",
 		ranks: 20,
@@ -803,12 +871,26 @@ var omegaSeeds = {
 		stats: {DBranged: 0.01, proc: 1},
 		prereq: ["SWfocusedplasmacannon"]
 	},
+	SWshowstopperammo: {
+		name: "Showstopper Ammo",
+		ranks: 20,
+		cost: {base: 18, increment: 2},
+		stats: {DRphysical: 18},
+		prereq: ["SWhighcapacitymagazine"]
+	},
 	SWsilencers: {
 		name: "Silencers",
 		ranks: 20,
 		cost: {base: 30, increment: 2},
 		stats: {DBunaware: 0.01},
 		prereq: ["SWassaultrifles"]
+	},
+	SWtagrounds: {
+		name: "Tag Rounds",
+		ranks: 20,
+		cost: {initial: 40, base: 35, increment: 5},
+		stats: {CR_if_ranged: 12, CD_if_ranged: 30},
+		prereq: ["SWsilencers"]
 	},
 };
 
