@@ -689,6 +689,9 @@ function update () {
 				};
 				currentStat.actual = currentStat.total * 0.99 / (currentStat.total + 3601) + ((equipped.CC) ? equipped.CC : 0);
 				currentStat.actual += ((subtype && equipped["CC" + subtype]) ? equipped["CC" + subtype] : 0);
+				if (subtype && tagThing.movement > 0 && equipped["CC" + subtype + "_if_movement"]) {
+					currentStat.actual += equipped["CC" + subtype + "_if_movement"];
+				};
 				break;
 			case "BR":
 				currentStat.total = ((currentStat.linked) ? stats[prefix].total : total.FIG * 60) + currentStat.value + ((equipStat) ? equipStat : 0);
@@ -742,6 +745,9 @@ function update () {
 							if (tagThing.physical > 0 && equipped.DBenergy_if_physical) {
 								currentStat.total += equipped.DBenergy_if_physical;
 							};
+							if (tagThing.movement > 0 && equipped.DBenergy_if_movement) {
+								currentStat.total += equipped.DBenergy_if_movement;
+							};
 							break;
 						case "mental":
 							currentStat.total += total.ENE * 0.04;
@@ -750,6 +756,9 @@ function update () {
 							};
 							if (tagThing.movement > 0 && equipped.DBmental_if_movement) {
 								currentStat.total += equipped.DBmental_if_movement;
+							};
+							if (equipped.SP_to_mental) {
+								currentStat.total += equipped.SP_to_mental * stats.SP.total;
 							};
 							break;
 						case "movement":
@@ -793,7 +802,7 @@ function update () {
 	for (k in stats.CR.subtype) {
 		if (stats.CR.subtype[k].damagetype) {
 			newCR[k] = ezCR.base + stats.CR.subtype[k].total;
-			ezCR[k] = newCR[k] * 0.99 / (newCR[k] + 3601) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC"+k]) ? equipped["CC"+k] : 0);
+			ezCR[k] = newCR[k] * 0.99 / (newCR[k] + 3601) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC"+k]) ? equipped["CC"+k] : 0) + ((tagThing.movement > 0 && equipped["CC" + k + "_if_movement"]) ? equipped["CC" + k + "_if_movement"] : 0);
 			ezDB[k] = ezDB.base + stats.DR.subtype[k].actual + stats.DB.subtype[k].actual;
 			ezIndex += tagThing[k] * calcIndex(ezDB[k], ezCR[k], stats.CD.actual, stats.BR.actual, stats.BD.actual);
 		};
@@ -908,7 +917,7 @@ alert("yes");
 							item.CR += (compareItem.stats["CR" + tag]) ? tagThing[tag] * compareItem.stats["CR" + tag] : 0;
 						};
 					};
-					item.CR = item.CR * 0.99 / (item.CR + 3601) + ((compareItem.stats.CC) ? compareItem.stats.CC : 0) + ((compareItem.stats["CC" + k]) ? compareItem.stats["CC" + k] : 0) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC" + k]) ? equipped["CC" + k] : 0);
+					item.CR = item.CR * 0.99 / (item.CR + 3601) + ((compareItem.stats.CC) ? compareItem.stats.CC : 0) + ((compareItem.stats["CC" + k]) ? compareItem.stats["CC" + k] : 0) + ((tagThing.movement > 0 && compareItem.stats["CC" + k + "_if_movement"]) ? compareItem.stats["CC" + k + "_if_movement"] : 0) + ((equipped.CC) ? equipped.CC : 0) + ((equipped["CC" + k]) ? equipped["CC" + k] : 0) + ((tagThing.movement > 0 && equipped["CC" + k + "_if_movement"]) ? equipped["CC" + k + "_if_movement"] : 0);
 					item.DB = (((compareItem.stats.DR) ? compareItem.stats.DR : 0) + itemcnvDR) / 4000 + ((compareItem.stats.DB) ? compareItem.stats.DB : 0) + item.FIG * 0.03;
 					item.DB += ((compareItem.stats["DR" + k]) ? compareItem.stats["DR" + k] / 4000 : 0) + ((compareItem.stats["DB" + k]) ? compareItem.stats["DB" + k] : 0);
 					switch (k) {
@@ -929,6 +938,9 @@ alert("yes");
 							if (tagThing.physical > 0 && compareItem.stats.DBenergy_if_physical) {
 								item.DB += compareItem.stats.DBenergy_if_physical;
 							};
+							if (tagThing.movement > 0 && compareItem.stats.DBenergy_if_movement) {
+								item.DB += compareItem.stats.DBenergy_if_movement;
+							};
 							break;
 						case "mental":
 							item.DB += item.ENE * 0.04;
@@ -937,6 +949,12 @@ alert("yes");
 							};
 							if (tagThing.movement > 0 && compareItem.stats.DBmental_if_movement) {
 								item.DB += compareItem.stats.DBmental_if_movement;
+							};
+							if (compareItem.stats.SP_to_mental) {
+								item.DB += compareItem.stats.SP_to_mental * (stats.SP.total + item.SP);
+							};
+							if (equipped.SP_to_mental) {
+								item.DB += equipped.SP_to_mental * item.SP;
 							};
 							break;
 					};

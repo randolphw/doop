@@ -442,7 +442,6 @@ var omegaSeeds = {
 		stats: {BR: 30, SP: -2, BD: 60, DB: 0.02},
 		prereq: ["MAterrigencrystals"]
 	},
-// TODO: finish Mutation
 	MUangel: {
 		name: "Angel",
 		ranks: 5,
@@ -456,6 +455,16 @@ var omegaSeeds = {
 		stats: {ATspeed: 5, ATenergy: 5, ATstrength: 5, ATfighting: 5, ATintelligence: 5, ATdurability: 5},
 		prereq: ["MUsabretooth"]
 	},
+	MUaurora: {
+		name: "Aurora",
+		ranks: 10,
+		cost: {base: 38, increment: 2},
+		stats: {DBenergy_if_movement: 0.01},
+		prereq: ["MUpsylocke"]
+	},
+// "Bishop"
+// "Blob"
+// "Box"
 	MUchamber: {
 		name: "Chamber",
 		ranks: 10,
@@ -463,23 +472,53 @@ var omegaSeeds = {
 		stats: {DBmental: 0.01},
 		prereq: ["MUangel", "MUpsylocke"]
 	},
+// "Dazzler"
+// "Dust"
+// "Elixer"
 	MUfrenzy: {
 		name: "Frenzy",
 		ranks: 10,
 		cost: {base: 20, increment: 2},
 		stats: {CD_if_melee: 60}
 	},
+// "Husk"
+// "Magneto"
+	MUnorthstar: {
+		name: "Northstar",
+		ranks: 1,
+		cost: {base: 250, increment: 0},
+		stats: {CCenergy_if_movement: 0.01},
+		prereq: ["MUaurora"]
+	},
+// "Polaris"
+	MUprofessorx: {
+		name: "Professor X",
+		ranks: 1,
+		cost: {base: 800, increment: 0},
+		stats: {SP_to_mental: 0.0002},
+		prereq: ["MUchamber"]
+		},
 	MUpsylocke: {
 		name: "Psylocke",
 		ranks: 10,
 		cost: {base: 35, increment: 5},
 		stats: {DBmental_if_movement: 0.01, DBphysical_if_movement: 0.01}
 	},
+// "Pyro"
 	MUsabretooth: {
 		name: "Sabretooth",
 		ranks: 5,
 		cost: {base: 150, increment: 25},
 		stats: {BR: 120, BD: 180}
+	},
+// "Squirrel Girl"
+// "Strong Guy"
+	MUsunfire: {
+		name: "Sunfire",
+		ranks: 10,
+		cost: {base: 40, increment: 5},
+		stats: {DBenergy: 0.01},
+		prereq: ["MUangel", "MUsabretooth"]
 	},
 	MUwarpath: {
 		name: "Warpath",
