@@ -20,6 +20,7 @@ td {width: 100px; font-family: Arial; font-size: small; vertical-align: top;}
 .omename {width: 290px;}
 .omedivision {width: 160px;}
 .cosname {width: 200px;}
+.cybname {width: 400px;}
 .attname {width: 100px;}
 .optiondelta {outline: #BB0000 solid 1px; text-align: right;}
 .optionefficiency {outline: #FFAA00 solid 1px; text-align: right;}
@@ -745,6 +746,9 @@ function update () {
 							if (tagThing.physical > 0 && equipped.DBenergy_if_physical) {
 								currentStat.total += equipped.DBenergy_if_physical;
 							};
+							if (tagThing.mental > 0 && equipped.DBenergy_if_mental) {
+								currentStat.total += equipped.DBenergy_if_mental;
+							};
 							if (tagThing.movement > 0 && equipped.DBenergy_if_movement) {
 								currentStat.total += equipped.DBenergy_if_movement;
 							};
@@ -821,6 +825,7 @@ function update () {
 		var output = system.substr(0, 3).toLowerCase();
 		switch (output) {
 			case "cos":
+			case "cyb":
 			case "ome":
 			case "syn":
 				var currentArray = [];
@@ -865,6 +870,7 @@ alert("yes");
 			if (currentArray || currentOption) {
 				switch (output) {
 					case "cos":
+					case "cyb":
 						for (var j = 0; j < currentArray.length; j++) {
 							if (currentArray[j].grade == thisOption.grade) {
 								opportunityCost(currentArray[j]);
@@ -945,6 +951,9 @@ alert("yes");
 							item.DB += item.ENE * 0.04;
 							if (tagThing.physical > 0 && compareItem.stats.DBenergy_if_physical) {
 								item.DB += compareItem.stats.DBenergy_if_physical;
+							};
+							if (tagThing.mental > 0 && compareItem.stats.DBenergy_if_mental) {
+								item.DB += compareItem.stats.DBenergy_if_mental;
 							};
 							if (tagThing.movement > 0 && compareItem.stats.DBenergy_if_movement) {
 								item.DB += compareItem.stats.DBenergy_if_movement;

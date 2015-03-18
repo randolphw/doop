@@ -128,6 +128,60 @@ var objCostumeAffixes = {
 		hp4: {name: "Health", grade: 4, stats: {HP: 548}}
 };
 
+var objCybernetics = {
+		hp4: {name: "4% Base Health", grade: 1, stats: {HP: 280}},
+		hp5: {name: "5% Base Health", grade: 1, stats: {HP: 350}},
+		hp6: {name: "6% Base Health", grade: 1, stats: {HP: 420}},
+		hp7: {name: "7% Base Health", grade: 1, stats: {HP: 490}},
+		hp8: {name: "8% Base Health", grade: 1, stats: {HP: 560}},
+		ms3: {name: "3% Move Speed", grade: 2, stats: {MS: 0.03}},
+		ms4: {name: "4% Move Speed", grade: 2, stats: {MS: 0.04}},
+		ms5: {name: "5% Move Speed", grade: 2, stats: {MS: 0.05}},
+		sp30: {name: "30 Spirit", grade: 2, stats: {SP: 30}},
+		sp40: {name: "40 Spirit", grade: 2, stats: {SP: 40}},
+		sp50: {name: "50 Spirit", grade: 2, stats: {SP: 50}},
+		cd2: {name: "2% Critical Damage", grade: 3, stats: {CM: 0.02}},
+		cd3: {name: "3% Critical Damage", grade: 3, stats: {CM: 0.03}},
+		phy2: {name: "2% Base Damage on Physical Attacks", grade: 3, stats: {DBphysical: 0.02}},
+		phy3: {name: "3% Base Damage on Physical Attacks", grade: 3, stats: {DBphysical: 0.03}},
+		ene2: {name: "2% Base Damage on Energy Attacks", grade: 3, stats: {DBenergy: 0.02}},
+		ene3: {name: "3% Base Damage on Energy Attacks", grade: 3, stats: {DBenergy: 0.03}},
+		men2: {name: "2% Base Damage on Mental Attacks", grade: 3, stats: {DBmental: 0.02}},
+		men3: {name: "3% Base Damage on Mental Attacks", grade: 3, stats: {DBmental: 0.03}},
+		mel2: {name: "2% Base Damage on Melee Attacks", grade: 3, stats: {DBmelee: 0.02}},
+		mel3: {name: "3% Base Damage on Melee Attacks", grade: 3, stats: {DBmelee: 0.03}},
+		ran2: {name: "2% Base Damage on Ranged Attacks", grade: 3, stats: {DBranged: 0.02}},
+		ran3: {name: "3% Base Damage on Ranged Attacks", grade: 3, stats: {DBranged: 0.03}},
+		are2: {name: "2% Base Damage on Area Attacks", grade: 3, stats: {DBare: 0.02}},
+		are3: {name: "3% Base Damage on Area Attacks", grade: 3, stats: {DBare: 0.03}},
+		sum4: {name: "4% Summoned Ally Damage", grade: 3, stats: {DBsummon: 0.04}},
+		m2e5: {name: "5% Energy Damage when hitting with a Mental Power", grade: 3, stats: {DBenergy_if_mental: 0.05}},
+		p2e5: {name: "5% Energy Damage when hitting with a Physical Power", grade: 3, stats: {DBenergy_if_physical: 0.05}},
+		p2m5: {name: "5% Mental Damage when hitting with a Physical Power", grade: 3, stats: {DBmental_if_physical: 0.05}},
+		bd5: {name: "5% Damage when Brutally Striking", grade: 3, stats: {BM: 0.05}},
+		bd10: {name: "10% Damage when Brutally Striking", grade: 3, stats: {BM: 0.05}},
+
+		all1: {name: "+1 All Attributes", grade: 5, stats: {ATdurability: 1, ATstrength: 1, ATfighting: 1, ATspeed: 1, ATenergy: 1, ATintelligence: 1}},
+		dur1: {name: "+1 Durability", grade: 5, stats: {ATdurability: 1}},
+		dur2: {name: "+2 Durability", grade: 5, stats: {ATdurability: 2}},
+		dur3: {name: "+3 Durability", grade: 5, stats: {ATdurability: 3}},
+		str1: {name: "+1 Strength", grade: 5, stats: {ATstrength: 1}},
+		str2: {name: "+2 Strength", grade: 5, stats: {ATstrength: 2}},
+		str3: {name: "+3 Strength", grade: 5, stats: {ATstrength: 3}},
+		fig1: {name: "+1 Fighting", grade: 5, stats: {ATfighting: 1}},
+		fig2: {name: "+2 Fighting", grade: 5, stats: {ATfighting: 2}},
+		fig3: {name: "+3 Fighting", grade: 5, stats: {ATfighting: 3}},
+		spd1: {name: "+1 Speed", grade: 5, stats: {ATspeed: 1}},
+		spd2: {name: "+2 Speed", grade: 5, stats: {ATspeed: 2}},
+		spd3: {name: "+3 Speed", grade: 5, stats: {ATspeed: 3}},
+		ene1: {name: "+1 Energy", grade: 5, stats: {ATenergy: 1}},
+		ene2: {name: "+2 Energy", grade: 5, stats: {ATenergy: 2}},
+		ene3: {name: "+3 Energy", grade: 5, stats: {ATenergy: 3}},
+		int1: {name: "+1 Intelligence", grade: 5, stats: {ATintelligence: 1}},
+		int2: {name: "+2 Intelligence", grade: 5, stats: {ATintelligence: 2}},
+		int3: {name: "+3 Intelligence", grade: 5, stats: {ATintelligence: 3}}
+};
+
 var objAttributes = {
 		dur: {name: "Durability", stats: {ATdurability: 1}},
 		str: {name: "Strength", stats: {ATstrength: 1}},
@@ -953,5 +1007,6 @@ var masterOptions = {
 		Synergies: objSynergies,
 		Omega_Points: objOmegaPoints(),
 		Costume_Affixes: objCostumeAffixes,
+		Cybernetics: objCybernetics,
 		Attributes: objAttributes
 };
