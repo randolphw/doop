@@ -748,6 +748,9 @@ function update () {
 							if (tagThing.movement > 0 && equipped.DBenergy_if_movement) {
 								currentStat.total += equipped.DBenergy_if_movement;
 							};
+							if (tagThing.area > 0 && equipped.DBenergy_if_area) {
+								currentStat.total += equipped.DBenergy_if_area;
+							};
 							break;
 						case "mental":
 							currentStat.total += total.ENE * 0.04;
@@ -759,6 +762,11 @@ function update () {
 							};
 							if (equipped.SP_to_mental) {
 								currentStat.total += equipped.SP_to_mental * stats.SP.total;
+							};
+							break;
+						case "area":
+							if (tagThing.energy > 0 && equipped.DBarea_if_energy) {
+								currentStat.total += equipped.DBarea_if_energy;
 							};
 							break;
 						case "movement":
@@ -941,6 +949,9 @@ alert("yes");
 							if (tagThing.movement > 0 && compareItem.stats.DBenergy_if_movement) {
 								item.DB += compareItem.stats.DBenergy_if_movement;
 							};
+							if (tagThing.area > 0 && compareItem.stats.DBenergy_if_area) {
+								currentStat.total += compareItem.stats.DBenergy_if_area;
+							};
 							break;
 						case "mental":
 							item.DB += item.ENE * 0.04;
@@ -961,6 +972,9 @@ alert("yes");
 					for (tag in stats.DR.subtype) {
 						if (!(stats.DR.subtype[tag].damagetype)) {
 							item.DB += ((compareItem.stats["DR" + tag]) ? tagThing[tag] * compareItem.stats["DR" + tag] / 4000 : 0) + ((compareItem.stats["DB" + tag]) ? tagThing[tag] * compareItem.stats["DB" + tag] : 0);
+							if (tag == "area" && tagThing.energy > 0 && compareItem.stats.DBarea_if_energy) {
+								item.DB += tagThing[tag] * compareItem.stats.DBarea_if_energy;
+							};
 							if (tag == "movement") {
 								item.DB += tagThing[tag] * item.SPE * 0.02;
 							};
