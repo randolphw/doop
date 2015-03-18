@@ -159,8 +159,7 @@ var objCybernetics = {
 		p2e5: {name: "5% Energy Damage when hitting with a Physical Power", grade: 3, stats: {DBenergy_if_physical: 0.05}},
 		p2m5: {name: "5% Mental Damage when hitting with a Physical Power", grade: 3, stats: {DBmental_if_physical: 0.05}},
 		bd5: {name: "5% Damage when Brutally Striking", grade: 3, stats: {BM: 0.05}},
-		bd10: {name: "10% Damage when Brutally Striking", grade: 3, stats: {BM: 0.05}},
-
+		bd10: {name: "10% Damage when Brutally Striking", grade: 3, stats: {BM: 0.10}},
 		all1: {name: "+1 All Attributes", grade: 5, stats: {ATdurability: 1, ATstrength: 1, ATfighting: 1, ATspeed: 1, ATenergy: 1, ATintelligence: 1}},
 		dur1: {name: "+1 Durability", grade: 5, stats: {ATdurability: 1}},
 		dur2: {name: "+2 Durability", grade: 5, stats: {ATdurability: 2}},
