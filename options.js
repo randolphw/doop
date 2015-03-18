@@ -398,7 +398,7 @@ var omegaSeeds = {
 		name: "Exogenesis",
 		ranks: 10,
 		cost: {base: 50, increment: 2},
-		stats: {DBenergy: 0.1},
+		stats: {DBenergy: 0.01},
 		prereq: ["MAterrigencrystals"]
 	},
 	MApymsgrowthparticles: {
