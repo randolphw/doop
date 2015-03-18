@@ -482,7 +482,13 @@ var omegaSeeds = {
 		stats: {CD_if_melee: 60}
 	},
 // "Husk"
-// "Magneto"
+	MUmagneto: {
+		name: "Magneto",
+		ranks: 10,
+		cost: {base: 30, increment: 5},
+		stats: {DBarea_if_energy: 0.01},
+		prereq: ["MUpolaris"]
+	},
 	MUnorthstar: {
 		name: "Northstar",
 		ranks: 1,
@@ -490,7 +496,13 @@ var omegaSeeds = {
 		stats: {CCenergy_if_movement: 0.01},
 		prereq: ["MUaurora"]
 	},
-// "Polaris"
+	MUpolaris: {
+		name: "Polaris",
+		ranks: 10,
+		cost: {base: 35, increment: 5},
+		stats: {DBenergy_if_area: 0.01},
+		prereq: ["MUfrenzy"]
+	},
 	MUprofessorx: {
 		name: "Professor X",
 		ranks: 1,
