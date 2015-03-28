@@ -59,54 +59,54 @@ function initialize () {
 		BR: {display: "Brutal Rating"	},
 		BD: {display: "Brutal Damage"	},
 		DR: {display: "Damage Rating",
-			subtype: {physical: {display: "physical",
+			subtype: {physical: {display: "Physical DR",
 						damagetype: true,
 						linked: true	},
-				energy: {display: "energy",
+				energy: {display: "Energy DR",
 						damagetype: true,
 						linked: true	},
-				mental: {display: "mental",
+				mental: {display: "Mental DR",
 						damagetype: true,
 						linked: true	},
-				melee: {display: "melee"	},
-				ranged: {display: "ranged"	},
-				area: {display: "area",
+				melee: {display: "Melee DR"	},
+				ranged: {display: "Ranged DR"	},
+				area: {display: "Area DR",
 					nosheet: true		},
-				dot: {display: "dot",
+				dot: {display: "DOT DR",
 					nosheet: true		},
-				movement: {display: "movement",
+				movement: {display: "Movement DR",
 					nosheet: true		},
-				boss: {display: "boss",
+				boss: {display: "Boss DR",
 					nosheet: true		},
-				unaware: {display: "unaware",
+				unaware: {display: "Unaware DR",
 					nosheet: true		}
 			}
 		},
-		DB: {display: "Damage Bonus",
+		DB: {display: "Base Damage",
 			percent: true,
-			subtype: {physical: {display: "physical",
+			subtype: {physical: {display: "Base Damage",
 						percent: true	},
-				energy: {display: "energy",
+				energy: {display: "Base Damage",
 						percent: true	},
-				mental: {display: "mental",
+				mental: {display: "Base Damage",
 						percent: true	},
-				melee: {display: "melee",
+				melee: {display: "Base Damage",
 						percent: true	},
-				ranged: {display: "ranged",
+				ranged: {display: "Base Damage",
 						percent: true	},
-				area: {display: "area",
+				area: {display: "Extra Damage",
 						percent: true,
 						nosheet: true	},
-				dot: {display: "dot",
+				dot: {display: "Extra Damage",
 						percent: true,
 						nosheet: true	},
-				movement: {display: "movement",
+				movement: {display: "Extra Damage",
 						percent: true,
 						nosheet: true	},
-				boss: {display: "boss",
+				boss: {display: "Extra Damage",
 						percent: true,
 						nosheet: true	},
-				unaware: {display: "unaware",
+				unaware: {display: "Extra Damage",
 						percent: true,
 						nosheet: true	}
 			}
@@ -126,10 +126,13 @@ function initialize () {
 	var buildStatTable = function (prefix, subtype) {
 				var currentStat = (subtype) ? stats[prefix].subtype[subtype] : stats[prefix];
 				var fieldName = prefix + ((subtype) ? subtype : "");
-				var newRow = statsTable.insertRow(rowcount);
+
+var targetRow = (prefix == "DB") ? 13 + (rowcount - 23) * 2 : rowcount;
+
+				var newRow = statsTable.insertRow(targetRow);
 				newRow.className = prefix + " " + ((subtype) ? subtype : "");
 				var newCell = newRow.insertCell(0);
-				newCell.innerHTML = ((subtype) ? "&rarr;" : "") + currentStat.display;
+				newCell.innerHTML = ((prefix == "CR" && subtype) ? "&rarr;" : "") + ((prefix == "DB") ? "&rarr;" : "") + currentStat.display;
 				newCell = newRow.insertCell(1);
 				if (!(currentStat.nosheet)) {
 					newCell.id = "sheet_" + fieldName;
@@ -163,6 +166,11 @@ function initialize () {
 			};
 		};
 	};
+
+// reordering
+
+//
+
 	var newRow = statsTable.insertRow(0);
 	var newCell = newRow.insertCell(0);
 	newCell.className = "heading center";
