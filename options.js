@@ -12,7 +12,10 @@ var objLegendary = {
 		shield: {name: "Shield of Perseus", stats: {DF: 2000, HP: 2000}},
 		pc: {name: "The Power Cosmic", stats: {HP: 1500, DRcosmic: 1500, ATcosmic: 1}},
 		eye: {name: "The Warlock's Eye", stats: {DRmental: 1000, SP: 50, CRmental: 500}},
-		nullifier: {name: "Ultimate Nullifier", stats: {BD: 8000}}
+		nullifier: {name: "Ultimate Nullifier", stats: {BD: 8000}},
+		gungnir80: {name: "L80 Gungnir", stats: {CR: 960, CD: 2400, BR: 300}},
+		mkraan80: {name: "L80 M'kraan", stats: {SP: 240, HP: 1200, DR: 600, CR: 600}},
+		nullifier80: {name: "L80 Nullifier", stats: {BD: 9600}}
 };
 
 var objMedallion = {
