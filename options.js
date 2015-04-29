@@ -1,7 +1,7 @@
 var objLegendary = {
 		casket: {name: "Casket of Ancient Winters", stats: {DRarea: 1000, DR: 500}},
 		ccr: {name: "Cosmic Control Rod", stats: {DRenergy: 600, CRenergy: 600, ATenergy: 2}},
-		excalibur: {name: "Excalibur", stats: {DRmelee: 1000, CR: 500}},
+		excalibur: {name: "Excalibur", stats: {DRmelee: 1000, DF: 1000, CR: 500, LOH: 200}},
 		bow: {name: "Golden Bow of Apollo", stats: {DRranged: 600, AS: 0.10, CRranged: 600}},
 // Gungnir: Proc is being averaged
 		gungnir: {name: "Gungnir", stats: {CR: 800, CD: 2000, BR: 250}},
@@ -13,9 +13,18 @@ var objLegendary = {
 		pc: {name: "The Power Cosmic", stats: {HP: 1500, DRcosmic: 1500, ATcosmic: 1}},
 		eye: {name: "The Warlock's Eye", stats: {DRmental: 1000, SP: 50, CRmental: 500}},
 		nullifier: {name: "Ultimate Nullifier", stats: {BD: 8000}},
-		gungnir80: {name: "L80 Gungnir", stats: {CR: 960, CD: 2400, BR: 300}},
-		mkraan80: {name: "L80 M'kraan", stats: {SP: 240, HP: 1200, DR: 600, CR: 600}},
-		nullifier80: {name: "L80 Nullifier", stats: {BD: 9600}}
+		casket80: {name: "Casket of Ancient Winters (80)", stats: {DRarea: 2000, DR: 1000}},
+		ccr80: {name: "Cosmic Control Rod (80)", stats: {DRenergy: 1000, CRenergy: 1000, HP: 1000, ATenergy: 5}},
+		excalibur80: {name: "Excalibur (80)", stats: {DRmelee: 1500, DF: 1500, CR: 750, LOH: 300}},
+		bow80: {name: "Golden Bow of Apollo (80)", stats: {DRranged: 1200, AS: 0.10, CRranged: 1200}},
+		gungnir80: {name: "Gungnir (80)", stats: {CR: 1200, CD: 3200, BR: 250}},
+		mkraan80: {name: "M'kraan Crystal (80)", stats: {SP: 200, HP: 1500, DR: 1000, CR: 1000}},
+		trident80: {name: "Neptune's Trident (80)", stats: {DR: 1000, CR: 1000}},
+		nornstones80: {name: "Norn Stones (80)", stats: {ATstrength: 5, ATfighting: 5, ATdurability: 5, ATspeed: 5, SK: 2}},
+		axe80: {name: "Savage Axe of Ares (80)", stats: {DRphysical: 1400, CR: 700, BD: 1400, BR: 700}},
+		shield80: {name: "Shield of Perseus (80)", stats: {DF: 5000, HP: 5000}},
+		eye80: {name: "The Warlock's Eye (80)", stats: {DRmental: 2000, SP: 100, CRmental: 1000}},
+		nullifier80: {name: "Ultimate Nullifier (80)", stats: {BD: 10000}}
 };
 
 var objMedallion = {
